@@ -1,0 +1,263 @@
+@import "tailwindcss";
+
+:root {
+  --institution-green: #0F4C35;
+  --certificate-gold: #B8963E;
+  --document-cream: #F5F2EB;
+  --seal-red: #8B2942;
+  --steel-gray: #4A4A4A;
+  --pure-white: #FFFFFF;
+}
+
+@theme inline {
+  --color-institution-green: #0F4C35;
+  --color-certificate-gold: #B8963E;
+  --color-document-cream: #F5F2EB;
+  --color-seal-red: #8B2942;
+  --color-steel-gray: #4A4A4A;
+  --color-pure-white: #FFFFFF;
+  --font-display: var(--font-dm-serif);
+  --font-body: var(--font-source-serif);
+  --font-mono: var(--font-jetbrains);
+  --font-accent: var(--font-bitter);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+::selection {
+  background-color: var(--institution-green);
+  color: var(--pure-white);
+}
+
+/* Linen Paper Texture */
+.linen-texture {
+  background-color: var(--document-cream);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4'%3E%3Crect width='4' height='4' fill='%23F5F2EB'/%3E%3Crect width='1' height='1' fill='%23E8E4DB' opacity='0.5'/%3E%3C/svg%3E");
+}
+
+/* Certificate Border */
+.certificate-border {
+  position: relative;
+  border: 2px solid var(--certificate-gold);
+}
+
+.certificate-border::before,
+.certificate-border::after {
+  content: '';
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--certificate-gold);
+}
+
+.certificate-border::before {
+  top: 8px;
+  left: 8px;
+  border-right: none;
+  border-bottom: none;
+}
+
+.certificate-border::after {
+  bottom: 8px;
+  right: 8px;
+  border-left: none;
+  border-top: none;
+}
+
+/* Embossed Effect */
+.embossed {
+  text-shadow:
+    1px 1px 1px rgba(255, 255, 255, 0.8),
+    -1px -1px 1px rgba(0, 0, 0, 0.1);
+}
+
+/* Seal Container */
+.seal-container {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Quality Seal */
+.quality-seal {
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--institution-green) 0%, #0A3525 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  box-shadow:
+    0 4px 20px rgba(15, 76, 53, 0.3),
+    inset 0 2px 4px rgba(255, 255, 255, 0.1);
+}
+
+.quality-seal::before {
+  content: '';
+  position: absolute;
+  inset: 8px;
+  border: 2px solid var(--certificate-gold);
+  border-radius: 50%;
+}
+
+.quality-seal::after {
+  content: '';
+  position: absolute;
+  inset: 16px;
+  border: 1px dashed var(--certificate-gold);
+  border-radius: 50%;
+  opacity: 0.6;
+}
+
+/* Fine Line Rules */
+.rule-line {
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--steel-gray) 20%,
+    var(--steel-gray) 80%,
+    transparent 100%
+  );
+  opacity: 0.2;
+}
+
+/* Card with Certificate Corners */
+.certificate-card {
+  position: relative;
+  background: var(--pure-white);
+  border: 1px solid rgba(184, 150, 62, 0.3);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.certificate-card::before,
+.certificate-card::after {
+  content: '';
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--certificate-gold);
+  opacity: 0.5;
+}
+
+.certificate-card::before {
+  top: -1px;
+  left: -1px;
+  border-right: none;
+  border-bottom: none;
+}
+
+.certificate-card::after {
+  bottom: -1px;
+  right: -1px;
+  border-left: none;
+  border-top: none;
+}
+
+/* Verification Badge */
+.verification-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  background: rgba(15, 76, 53, 0.08);
+  border: 1px solid rgba(15, 76, 53, 0.2);
+  border-radius: 2px;
+  font-family: var(--font-jetbrains);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--institution-green);
+}
+
+/* Official Counter */
+.official-counter {
+  font-family: var(--font-jetbrains);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+
+/* Gold Accent Line */
+.gold-accent {
+  height: 4px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--certificate-gold) 10%,
+    var(--certificate-gold) 90%,
+    transparent 100%
+  );
+}
+
+/* Typography */
+h1 {
+  font-family: var(--font-dm-serif), Georgia, serif;
+  font-size: 2.25rem;
+  letter-spacing: -0.025em;
+  line-height: 1.1;
+}
+
+@media (min-width: 768px) {
+  h1 {
+    font-size: 3rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  h1 {
+    font-size: 3.75rem;
+  }
+}
+
+h2 {
+  font-family: var(--font-dm-serif), Georgia, serif;
+  font-size: 1.875rem;
+  letter-spacing: -0.025em;
+}
+
+@media (min-width: 768px) {
+  h2 {
+    font-size: 2.25rem;
+  }
+}
+
+h3 {
+  font-family: var(--font-dm-serif), Georgia, serif;
+  font-size: 1.25rem;
+}
+
+@media (min-width: 768px) {
+  h3 {
+    font-size: 1.5rem;
+  }
+}
+
+p {
+  font-family: var(--font-source-serif), Georgia, serif;
+  font-size: 1rem;
+  line-height: 1.75;
+}
+
+@media (min-width: 768px) {
+  p {
+    font-size: 1.125rem;
+  }
+}
+
+/* WhatsApp Button */
+.whatsapp-btn {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 1000;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.whatsapp-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 20px rgba(37, 211, 102, 0.4);
+}

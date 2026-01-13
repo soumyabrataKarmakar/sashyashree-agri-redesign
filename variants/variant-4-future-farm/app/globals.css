@@ -1,0 +1,259 @@
+@import "tailwindcss";
+
+:root {
+  --electric-lime: #BFFF00;
+  --deep-forest: #0D2818;
+  --sky-blue: #00A3FF;
+  --hot-coral: #FF6B6B;
+  --charcoal: #1C1C1C;
+  --off-white: #F8F8F6;
+}
+
+@theme inline {
+  --color-electric-lime: #BFFF00;
+  --color-deep-forest: #0D2818;
+  --color-sky-blue: #00A3FF;
+  --color-hot-coral: #FF6B6B;
+  --color-charcoal: #1C1C1C;
+  --color-off-white: #F8F8F6;
+  --font-display: var(--font-syne);
+  --font-body: var(--font-dm-sans);
+  --font-ui: var(--font-outfit);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+::selection {
+  background-color: var(--electric-lime);
+  color: var(--charcoal);
+}
+
+/* Gradient Mesh Background */
+.gradient-mesh {
+  background:
+    radial-gradient(at 40% 20%, rgba(191, 255, 0, 0.15) 0px, transparent 50%),
+    radial-gradient(at 80% 0%, rgba(0, 163, 255, 0.1) 0px, transparent 50%),
+    radial-gradient(at 0% 50%, rgba(255, 107, 107, 0.08) 0px, transparent 50%),
+    var(--charcoal);
+}
+
+/* Noise Texture */
+.noise-overlay::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
+  pointer-events: none;
+}
+
+/* Hexagon Pattern */
+.hex-pattern {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='49' viewBox='0 0 28 49'%3E%3Cg fill-rule='evenodd'%3E%3Cg fill='%23BFFF00' fill-opacity='0.05'%3E%3Cpath d='M13.99 9.25l13 7.5v15l-13 7.5L1 31.75v-15l12.99-7.5zM3 17.9v12.7l10.99 6.34 11-6.35V17.9l-11-6.34L3 17.9zM0 15l12.98-7.5V0h-2v6.35L0 12.69v2.3zm0 18.5L12.98 41v8h-2v-6.85L0 35.81v-2.3zM15 0v7.5L27.99 15H28v-2.31h-.01L17 6.35V0h-2zm0 49v-8l12.99-7.5H28v2.31h-.01L17 42.15V49h-2z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+
+/* Glassmorphism Card */
+.glass-card {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Glow Effect */
+.glow-lime {
+  box-shadow: 0 0 30px rgba(191, 255, 0, 0.3);
+}
+
+.glow-blue {
+  box-shadow: 0 0 30px rgba(0, 163, 255, 0.3);
+}
+
+/* 3D Tilt Card */
+.tilt-card {
+  transform-style: preserve-3d;
+  transition: transform 0.3s ease;
+}
+
+.tilt-card:hover {
+  transform: perspective(1000px) rotateX(5deg) rotateY(-5deg);
+}
+
+/* Magnetic Button Effect */
+.magnetic-btn {
+  position: relative;
+  transition: transform 0.2s cubic-bezier(0.33, 1, 0.68, 1);
+}
+
+/* Animated Gradient Border */
+.gradient-border {
+  position: relative;
+  background: var(--charcoal);
+  z-index: 1;
+}
+
+.gradient-border::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  background: linear-gradient(135deg, var(--electric-lime), var(--sky-blue), var(--hot-coral), var(--electric-lime));
+  background-size: 300% 300%;
+  animation: gradientMove 5s ease infinite;
+  border-radius: inherit;
+  z-index: -1;
+}
+
+@keyframes gradientMove {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+/* Bento Grid */
+.bento-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+}
+
+@media (max-width: 1024px) {
+  .bento-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .bento-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Stat Number */
+.stat-number {
+  font-family: var(--font-syne), sans-serif;
+  font-weight: 800;
+  background: linear-gradient(135deg, var(--electric-lime) 0%, var(--sky-blue) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Pill Button */
+.pill-btn {
+  border-radius: 100px;
+  padding: 12px 28px;
+  font-family: var(--font-outfit), sans-serif;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.pill-btn-primary {
+  background: var(--electric-lime);
+  color: var(--charcoal);
+}
+
+.pill-btn-primary:hover {
+  box-shadow: 0 0 30px rgba(191, 255, 0, 0.4);
+  transform: translateY(-2px);
+}
+
+.pill-btn-secondary {
+  background: transparent;
+  border: 2px solid var(--electric-lime);
+  color: var(--electric-lime);
+}
+
+.pill-btn-secondary:hover {
+  background: var(--electric-lime);
+  color: var(--charcoal);
+}
+
+/* Typography */
+h1 {
+  font-family: var(--font-syne), sans-serif;
+  font-size: 3rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+@media (min-width: 768px) {
+  h1 {
+    font-size: 4rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  h1 {
+    font-size: 5rem;
+  }
+}
+
+h2 {
+  font-family: var(--font-syne), sans-serif;
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+@media (min-width: 768px) {
+  h2 {
+    font-size: 2.5rem;
+  }
+}
+
+h3 {
+  font-family: var(--font-syne), sans-serif;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+@media (min-width: 768px) {
+  h3 {
+    font-size: 1.5rem;
+  }
+}
+
+p {
+  font-family: var(--font-dm-sans), sans-serif;
+  font-size: 1rem;
+  line-height: 1.7;
+  color: rgba(248, 248, 246, 0.8);
+}
+
+@media (min-width: 768px) {
+  p {
+    font-size: 1.125rem;
+  }
+}
+
+/* WhatsApp Button */
+.whatsapp-btn {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 1000;
+  transition: all 0.3s ease;
+}
+
+.whatsapp-btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 30px rgba(37, 211, 102, 0.5);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--charcoal);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--electric-lime);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #d4ff33;
+}
