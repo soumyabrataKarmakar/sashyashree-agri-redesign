@@ -486,6 +486,24 @@ Interactive seed selector in hero - click a crop type and watch seeds animate in
 
 ---
 
+## Live Deployments
+
+All 4 variants are deployed to AWS Amplify with automatic CI/CD from GitHub branches.
+
+| Variant | Branch | Live URL |
+|---------|--------|----------|
+| Golden Harvest | `variant-1` | https://variant-1.d2mwc8xx75txzh.amplifyapp.com |
+| Bengal Roots | `variant-2` | https://variant-2.d2mwc8xx75txzh.amplifyapp.com |
+| Trust Mark | `variant-3` | https://variant-3.d2mwc8xx75txzh.amplifyapp.com |
+| Future Farm | `variant-4` | https://variant-4.d2mwc8xx75txzh.amplifyapp.com |
+
+**Deployment Details:**
+- **AWS Region:** ap-south-1 (Mumbai)
+- **App ID:** d2mwc8xx75txzh
+- **Auto-deploy:** Enabled (push to branch triggers rebuild)
+
+---
+
 ## Implementation Notes
 
 ### Shared Dependencies
