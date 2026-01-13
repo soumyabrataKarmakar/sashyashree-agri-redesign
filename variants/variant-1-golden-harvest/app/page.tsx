@@ -576,12 +576,10 @@ function ProductCategories() {
               initial={{ opacity: 0, y: 40 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.6, delay: index * 0.1 }}
-              className={`group relative bg-cream-field rounded-2xl overflow-hidden card-lift ${
-                product.featured ? 'md:col-span-2 lg:col-span-1 lg:row-span-2' : ''
-              }`}
+              className="group relative bg-cream-field rounded-2xl overflow-hidden card-lift"
             >
               {/* Product Packet Display */}
-              <div className={`relative ${product.featured ? 'aspect-[4/5]' : 'aspect-[4/3]'} bg-gradient-to-br from-harvest-gold/10 via-white to-sunset-orange/10`}>
+              <div className="relative aspect-[4/3] bg-gradient-to-br from-harvest-gold/10 via-white to-sunset-orange/10">
                 {/* Product Image */}
                 <div className="absolute inset-0 flex items-center justify-center p-6">
                   <motion.div
