@@ -272,6 +272,7 @@ function GrowingPlant() {
 // Navigation
 function Navigation() {
   const [scrolled, setScrolled] = useState(false)
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50)
@@ -285,22 +286,24 @@ function Navigation() {
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.6, ease: 'easeOut' }}
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-        scrolled ? 'bg-soft-white/95 backdrop-blur-md shadow-sm' : 'bg-transparent'
+        scrolled ? 'bg-soft-white/95 backdrop-blur-md shadow-sm' : ''
       }`}
     >
       <div className="max-w-6xl mx-auto px-6 py-4">
         <div className="flex items-center justify-between">
-          {/* Logo */}
+          {/* Logo - Real Sashyashree Brand */}
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-full bg-sage-green flex items-center justify-center shadow-md">
-              <svg className="w-6 h-6 text-soft-white" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12 2C8 6 4 10 4 14c0 4.4 3.6 8 8 8s8-3.6 8-8c0-4-4-8-8-12zm0 18c-3.3 0-6-2.7-6-6 0-2.5 2-5 6-9 4 4 6 6.5 6 9 0 3.3-2.7 6-6 6z"/>
-                <circle cx="12" cy="14" r="3" />
-              </svg>
+            <div className="relative w-14 h-14 rounded-full overflow-hidden bg-white shadow-md">
+              <Image
+                src="/images/logo.png"
+                alt="Sashyashree Logo"
+                fill
+                className="object-contain p-1"
+              />
             </div>
             <div>
-              <span className="font-display text-xl text-forest-deep">Sashyashree Agri</span>
-              <span className="block text-xs font-body text-sage-green">Since 1992</span>
+              <span className={`font-display text-xl ${scrolled ? 'text-forest-deep' : 'text-soft-white'}`}>Sashyashree Agri</span>
+              <span className={`block text-xs font-body ${scrolled ? 'text-sage-green' : 'text-soft-white/70'}`}>Since 1992</span>
             </div>
           </div>
 
@@ -310,23 +313,76 @@ function Navigation() {
               <a
                 key={item}
                 href={`#${item.toLowerCase()}`}
-                className="font-body text-sm text-rich-earth hover:text-sage-green transition-colors relative group"
+                className={`font-body text-base font-medium transition-colors relative group ${
+                  scrolled ? 'text-rich-earth hover:text-sage-green' : 'text-soft-white/90 hover:text-terracotta'
+                }`}
               >
                 {item}
-                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-sage-green rounded-full transition-all group-hover:w-full" />
+                <span className={`absolute -bottom-1 left-0 w-0 h-0.5 rounded-full transition-all group-hover:w-full ${
+                  scrolled ? 'bg-sage-green' : 'bg-terracotta'
+                }`} />
               </a>
             ))}
           </div>
 
-          {/* CTA */}
-          <a
-            href="#contact"
-            className="btn-organic btn-organic-primary text-sm hidden sm:inline-flex"
-          >
-            Get in Touch
-          </a>
+          {/* CTA & Mobile Menu */}
+          <div className="flex items-center gap-3">
+            <a
+              href="#contact"
+              className="btn-organic btn-organic-primary text-base hidden sm:inline-flex"
+            >
+              Get in Touch
+            </a>
+
+            {/* Mobile Hamburger */}
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className={`md:hidden p-2 rounded-lg transition-colors ${
+                scrolled ? 'text-forest-deep hover:bg-forest-deep/10' : 'text-soft-white hover:bg-soft-white/10'
+              }`}
+              aria-label="Toggle menu"
+            >
+              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                {mobileMenuOpen ? (
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                ) : (
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                )}
+              </svg>
+            </button>
+          </div>
         </div>
       </div>
+
+      {/* Mobile Menu Drawer */}
+      <motion.div
+        initial={false}
+        animate={mobileMenuOpen ? { height: 'auto', opacity: 1 } : { height: 0, opacity: 0 }}
+        transition={{ duration: 0.3 }}
+        className="md:hidden overflow-hidden bg-soft-white/98 backdrop-blur-md"
+      >
+        <div className="px-6 py-4 space-y-3 border-t border-sage-green/10">
+          {['Story', 'Seeds', 'Farmers', 'Contact'].map((item) => (
+            <a
+              key={item}
+              href={`#${item.toLowerCase()}`}
+              onClick={() => setMobileMenuOpen(false)}
+              className="block font-body text-base font-medium text-forest-deep hover:text-sage-green transition-colors py-2"
+            >
+              {item}
+            </a>
+          ))}
+          <a
+            href="tel:+918001926461"
+            className="flex items-center justify-center gap-2 mt-4 px-6 py-3 bg-sage-green text-soft-white font-body font-semibold text-base rounded-full hover:bg-terracotta transition-colors"
+          >
+            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/>
+            </svg>
+            Call Now
+          </a>
+        </div>
+      </motion.div>
     </motion.nav>
   )
 }
@@ -361,19 +417,18 @@ function HeroSection() {
 
   return (
     <section className="relative min-h-screen flex items-center overflow-hidden">
-      {/* Rich Organic Background */}
+      {/* Rich Organic Background - Lush Green Paddy Fields with Palm Trees */}
       <div className="absolute inset-0">
         <Image
-          src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=2532"
-          alt="Lush green field at sunrise"
+          src="https://images.unsplash.com/photo-1695150601855-f545034a070a?q=80&w=2532"
+          alt="Lush green paddy rice fields with palm trees in Andhra Pradesh, India"
           fill
           className="object-cover"
           priority
         />
-        {/* Multi-layered organic gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-br from-forest-deep/70 via-sage-green/40 to-transparent" />
-        <div className="absolute inset-0 bg-gradient-to-r from-warm-cream/85 via-warm-cream/50 to-transparent" />
-        <div className="absolute inset-0 bg-gradient-to-t from-rich-earth/20 via-transparent to-sage-green/10" />
+        {/* Deep forest gradient - earthy tones, no white */}
+        <div className="absolute inset-0 bg-gradient-to-r from-forest-deep/80 via-forest-deep/40 to-forest-deep/20" />
+        <div className="absolute inset-0 bg-gradient-to-t from-rich-earth/50 via-transparent to-transparent" />
       </div>
 
       {/* Animated Breathing Blobs */}
@@ -397,7 +452,7 @@ function HeroSection() {
 
           {/* Animated Headline */}
           <motion.h1
-            className="mb-6"
+            className="mb-6 text-warm-cream drop-shadow-lg"
             variants={containerVariants}
             initial="hidden"
             animate="visible"
@@ -409,7 +464,7 @@ function HeroSection() {
             ))}
             <motion.span
               variants={wordVariants}
-              className="inline-block text-sage-green"
+              className="inline-block text-terracotta"
             >
               Naturally
             </motion.span>
@@ -417,7 +472,7 @@ function HeroSection() {
 
           {/* Description */}
           <motion.p
-            className="text-lg mb-8 max-w-lg opacity-90"
+            className="text-lg mb-8 max-w-lg text-warm-cream/95 drop-shadow-md"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.8 }}
@@ -620,43 +675,49 @@ function StorySection() {
   )
 }
 
-// Seed Categories Section
+// Seed Categories Section - Using Real Product Packets
 function SeedCategories() {
   const categories = [
     {
       name: 'Paddy Seeds',
-      varieties: 'Jamini, Badsha Bhog, Swarnamoti',
-      image: 'https://images.unsplash.com/photo-1536304993881-ff6e9eefa2a6?q=80&w=600',
+      varieties: 'Jamini, Badsha Bhog, Disha',
+      image: '/images/products/jamini.png',
+      isLocalProduct: true,
       color: 'bg-sage-green',
     },
     {
       name: 'Oil Seeds',
       varieties: 'Sohini Mustard, Usha Sesame',
-      image: 'https://images.unsplash.com/photo-1615485290382-441e4d049cb5?q=80&w=600',
+      image: '/images/products/sohini.png',
+      isLocalProduct: true,
       color: 'bg-terracotta',
     },
     {
-      name: 'Jute Seeds',
-      varieties: 'Premium Quality Imports',
-      image: 'https://images.unsplash.com/photo-1530836369250-ef72a3f5cda8?q=80&w=600',
+      name: 'Aromatic Rice',
+      varieties: 'Badsha Bhog Premium',
+      image: '/images/products/badsha-bhog.png',
+      isLocalProduct: true,
       color: 'bg-rich-earth',
     },
     {
       name: 'Fodder Seeds',
-      varieties: 'SSG-106 Sudan Grass, Hybrid Bajra',
-      image: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=600',
+      varieties: 'SSG-106 Sudan Grass',
+      image: '/images/products/ssg-106.png',
+      isLocalProduct: true,
       color: 'bg-forest-deep',
     },
     {
       name: 'Maize Seeds',
-      varieties: 'SMS-4025, SMS-4055 Hybrids',
-      image: 'https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?q=80&w=600',
+      varieties: 'SMS-4055 Hybrid',
+      image: '/images/products/sms-4055.png',
+      isLocalProduct: true,
       color: 'bg-sage-green',
     },
     {
-      name: 'Vegetable Seeds',
-      varieties: 'Leafy Vegetables & More',
-      image: 'https://images.unsplash.com/photo-1592921870789-04563d55041c?q=80&w=600',
+      name: 'Sesame Seeds',
+      varieties: 'Usha Premium Quality',
+      image: '/images/products/usha.png',
+      isLocalProduct: true,
       color: 'bg-terracotta',
     },
   ]
@@ -688,17 +749,25 @@ function SeedCategories() {
               transition={{ delay: index * 0.1 }}
               className="soft-card overflow-hidden group cursor-pointer"
             >
-              <div className="relative h-48 overflow-hidden">
-                <Image
-                  src={category.image}
-                  alt={category.name}
-                  fill
-                  className="object-cover transition-transform duration-500 group-hover:scale-110"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-forest-deep/60 to-transparent" />
+              {/* Product Packet Display */}
+              <div className="relative h-56 overflow-hidden bg-gradient-to-b from-warm-cream to-soft-white flex items-center justify-center p-4">
+                <motion.div
+                  className="relative w-36 h-48"
+                  whileHover={{ scale: 1.08, rotate: 2 }}
+                  transition={{ type: 'spring', stiffness: 300 }}
+                >
+                  <Image
+                    src={category.image}
+                    alt={category.name}
+                    fill
+                    className="object-contain drop-shadow-lg"
+                  />
+                </motion.div>
+                {/* Decorative accent */}
                 <div className={`absolute top-4 right-4 w-3 h-3 rounded-full ${category.color}`} />
+                <div className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-soft-white to-transparent" />
               </div>
-              <div className="p-6">
+              <div className="p-6 border-t border-sage-green/10">
                 <h3 className="text-forest-deep mb-2">{category.name}</h3>
                 <p className="text-sm text-rich-earth/70">{category.varieties}</p>
               </div>
@@ -710,28 +779,68 @@ function SeedCategories() {
   )
 }
 
-// Testimonials Section
+// Testimonials Section - Real Farmer Testimonials with Horizontal Scroll
 function TestimonialsSection() {
+  const scrollRef = useRef<HTMLDivElement>(null)
+
   const testimonials = [
     {
-      name: 'Ramesh Mandal',
-      location: 'Hooghly, West Bengal',
-      quote: 'Sashyashree paddy seeds have transformed my yield. The Jamini variety is exceptional!',
-      image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=200',
+      name: 'Chandan Baidy',
+      nameBn: 'চন্দন বৈদ্য',
+      location: 'South 24 Parganas, West Bengal',
+      quote: 'গত বোরো মরসুমে দিশা ধানবীজ চাষ করে ভালো ফলন পেয়েছিলাম। Sashyashree seeds transformed my harvest!',
+      image: '/images/farmers/chandan.jpg',
     },
     {
-      name: 'Subhas Das',
-      location: 'Burdwan, West Bengal',
-      quote: 'Been buying mustard seeds from them since 1995. Trust and quality that never fails.',
-      image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=200',
+      name: 'Malay Singh',
+      nameBn: 'মলয় সিংহ',
+      location: 'West Burdwan, West Bengal',
+      quote: 'সোহিনী সরিষা বীজ চাষ করে বিঘা প্রতি ৩৫০ কেজি ফলন পাই। Best mustard seeds in the market!',
+      image: '/images/farmers/malai.jpg',
     },
     {
-      name: 'Pranab Roy',
-      location: 'Malda, West Bengal',
-      quote: 'The fodder seeds are excellent for my cattle. Healthy animals, happy farmer!',
-      image: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=200',
+      name: 'Sunirmal Paria',
+      nameBn: 'সুনির্মল পাড়িয়া',
+      location: 'West Midnapore, West Bengal',
+      quote: 'স্বর্ণমতি ও বাদশাভোগ ধানবীজে একর প্রতি ২০০০ কেজি ফলন। Exceptional aromatic rice yield!',
+      image: '/images/farmers/sunirmal.jpg',
+    },
+    {
+      name: 'Sadhan Mondal',
+      nameBn: 'সাধন মন্ডল',
+      location: 'Bankura, West Bengal',
+      quote: 'SMS-4055 মাইজ বীজ চাষ করে অসাধারণ ফলন পেয়েছি। Quality seeds make all the difference!',
+      image: '/images/farmers/sadhan.jpg',
+    },
+    {
+      name: 'Kalipad Mishra',
+      nameBn: 'কালিপদ মিশ্র',
+      location: 'Purulia, West Bengal',
+      quote: 'উষা তিল বীজে বিঘা প্রতি ভালো ফলন। Trusted Sashyashree for years!',
+      image: '/images/farmers/kalipad.jpg',
     },
   ]
+
+  const scroll = (direction: 'left' | 'right') => {
+    if (scrollRef.current) {
+      const container = scrollRef.current
+      const cardWidth = 340 // Card width + gap
+      const maxScroll = container.scrollWidth - container.clientWidth
+
+      let newScroll = direction === 'left'
+        ? container.scrollLeft - cardWidth
+        : container.scrollLeft + cardWidth
+
+      // Infinite scroll: wrap around
+      if (newScroll < 0) {
+        newScroll = maxScroll
+      } else if (newScroll > maxScroll) {
+        newScroll = 0
+      }
+
+      container.scrollTo({ left: newScroll, behavior: 'smooth' })
+    }
+  }
 
   return (
     <section id="farmers" className="py-28 watercolor-wash">
@@ -746,36 +855,82 @@ function TestimonialsSection() {
           <h2>Growing Together</h2>
         </motion.div>
 
-        <div className="grid md:grid-cols-3 gap-8">
-          {testimonials.map((testimonial, index) => (
-            <motion.div
-              key={testimonial.name}
-              initial={{ opacity: 0, y: 40 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: index * 0.15 }}
-              className="relative"
-            >
-              <div className="speech-bubble mb-8">
-                <p className="text-rich-earth italic">&quot;{testimonial.quote}&quot;</p>
-              </div>
-              <div className="flex items-center gap-4 ml-4">
-                <div className="w-14 h-14 rounded-full overflow-hidden border-3 border-sage-green">
-                  <Image
-                    src={testimonial.image}
-                    alt={testimonial.name}
-                    width={56}
-                    height={56}
-                    className="object-cover w-full h-full"
-                  />
+        {/* Scrollable Container with Arrows */}
+        <div className="relative">
+          {/* Left Arrow - Fixed position, no scale animation */}
+          <button
+            onClick={() => scroll('left')}
+            className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-2 md:-translate-x-6 z-10 w-11 h-11 rounded-full bg-soft-white shadow-lg border border-sage-green/20 flex items-center justify-center hover:bg-sage-green hover:border-sage-green transition-colors duration-300 group"
+            aria-label="Previous testimonial"
+          >
+            <svg className="w-5 h-5 text-forest-deep group-hover:text-white transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+          </button>
+
+          {/* Testimonials Scroll Container - Horizontal only, hidden scrollbar */}
+          <div
+            ref={scrollRef}
+            className="flex gap-6 overflow-x-auto overflow-y-hidden pb-4 scroll-smooth px-1 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+          >
+            {testimonials.map((testimonial, index) => (
+              <motion.div
+                key={testimonial.name}
+                initial={{ opacity: 0, y: 40 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.08 }}
+                className="relative flex-shrink-0 w-[300px] md:w-[320px]"
+              >
+                {/* Card with organic shape */}
+                <div className="bg-soft-white rounded-3xl p-6 shadow-md border border-sage-green/10 hover:shadow-lg hover:border-sage-green/20 transition-all duration-300">
+                  {/* Quote mark */}
+                  <div className="text-sage-green/30 text-4xl font-display leading-none mb-3">&ldquo;</div>
+
+                  {/* Quote text */}
+                  <p className="text-rich-earth text-sm leading-relaxed mb-6 min-h-[80px]">
+                    {testimonial.quote}
+                  </p>
+
+                  {/* Farmer info */}
+                  <div className="flex items-center gap-3 pt-4 border-t border-sage-green/10">
+                    <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-sage-green/40 shadow-sm flex-shrink-0">
+                      <Image
+                        src={testimonial.image}
+                        alt={testimonial.name}
+                        width={48}
+                        height={48}
+                        className="object-cover w-full h-full"
+                      />
+                    </div>
+                    <div className="min-w-0">
+                      <h4 className="font-display text-forest-deep text-sm truncate">{testimonial.nameBn}</h4>
+                      <p className="text-xs text-rich-earth/50 truncate">{testimonial.name}</p>
+                      <p className="text-xs text-terracotta/70 truncate">{testimonial.location}</p>
+                    </div>
+                  </div>
                 </div>
-                <div>
-                  <h4 className="font-display text-forest-deep">{testimonial.name}</h4>
-                  <p className="text-sm text-rich-earth/60">{testimonial.location}</p>
-                </div>
-              </div>
-            </motion.div>
-          ))}
+              </motion.div>
+            ))}
+          </div>
+
+          {/* Right Arrow - Fixed position, no scale animation */}
+          <button
+            onClick={() => scroll('right')}
+            className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-2 md:translate-x-6 z-10 w-11 h-11 rounded-full bg-soft-white shadow-lg border border-sage-green/20 flex items-center justify-center hover:bg-sage-green hover:border-sage-green transition-colors duration-300 group"
+            aria-label="Next testimonial"
+          >
+            <svg className="w-5 h-5 text-forest-deep group-hover:text-white transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
+        </div>
+
+        {/* Scroll indicator dots */}
+        <div className="flex justify-center mt-8 gap-1.5">
+          <div className="w-6 h-1 rounded-full bg-sage-green/50" />
+          <div className="w-1.5 h-1 rounded-full bg-sage-green/20" />
+          <div className="w-1.5 h-1 rounded-full bg-sage-green/20" />
         </div>
       </div>
     </section>
@@ -934,12 +1089,19 @@ function ContactSection() {
               </div>
               <div>
                 <label className="block text-sm text-rich-earth mb-2 font-body">I am a...</label>
-                <select className="w-full px-4 py-3 rounded-xl border border-sage-green/30 focus:border-sage-green focus:outline-none focus:ring-2 focus:ring-sage-green/20 transition-all font-body bg-white">
-                  <option>Farmer</option>
-                  <option>Dealer / Distributor</option>
-                  <option>Agricultural Business</option>
-                  <option>Other</option>
-                </select>
+                <div className="relative">
+                  <select className="w-full px-4 py-3 pr-10 rounded-xl border border-sage-green/30 focus:border-sage-green focus:outline-none focus:ring-2 focus:ring-sage-green/20 transition-all font-body bg-white appearance-none cursor-pointer">
+                    <option>Farmer</option>
+                    <option>Dealer / Distributor</option>
+                    <option>Agricultural Business</option>
+                    <option>Other</option>
+                  </select>
+                  <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
+                    <svg className="w-5 h-5 text-sage-green" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </div>
+                </div>
               </div>
               <div>
                 <label className="block text-sm text-rich-earth mb-2 font-body">Message</label>
@@ -969,26 +1131,56 @@ function Footer() {
           {/* Logo & About */}
           <div className="md:col-span-2">
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-full bg-sage-green flex items-center justify-center">
-                <svg className="w-5 h-5 text-soft-white" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M12 2C8 6 4 10 4 14c0 4.4 3.6 8 8 8s8-3.6 8-8c0-4-4-8-8-12zm0 18c-3.3 0-6-2.7-6-6 0-2.5 2-5 6-9 4 4 6 6.5 6 9 0 3.3-2.7 6-6 6z"/>
-                </svg>
+              <div className="relative w-12 h-12 rounded-full overflow-hidden bg-white shadow-sm">
+                <Image
+                  src="/images/logo.png"
+                  alt="Sashyashree Logo"
+                  fill
+                  className="object-contain p-1"
+                />
               </div>
-              <span className="font-display text-lg text-forest-deep">Sashyashree Agri</span>
+              <span className="font-display text-xl text-forest-deep">Sashyashree Agri</span>
             </div>
-            <p className="text-sm text-rich-earth/70 max-w-sm">
+            <p className="text-base text-rich-earth/70 max-w-sm mb-6">
               Nurturing Eastern India&apos;s agricultural dreams since 1992 with premium
               quality seeds and unwavering commitment to farmer prosperity.
             </p>
+            {/* Social Links */}
+            <div className="flex gap-3">
+              <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-forest-deep/10 flex items-center justify-center text-forest-deep/60 hover:bg-sage-green hover:text-soft-white transition-colors">
+                <span className="sr-only">Facebook</span>
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                </svg>
+              </a>
+              <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-forest-deep/10 flex items-center justify-center text-forest-deep/60 hover:bg-sage-green hover:text-soft-white transition-colors">
+                <span className="sr-only">Twitter</span>
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                </svg>
+              </a>
+              <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-forest-deep/10 flex items-center justify-center text-forest-deep/60 hover:bg-sage-green hover:text-soft-white transition-colors">
+                <span className="sr-only">Instagram</span>
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                </svg>
+              </a>
+              <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-forest-deep/10 flex items-center justify-center text-forest-deep/60 hover:bg-sage-green hover:text-soft-white transition-colors">
+                <span className="sr-only">YouTube</span>
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                </svg>
+              </a>
+            </div>
           </div>
 
           {/* Quick Links */}
           <div>
-            <h4 className="font-display text-forest-deep mb-4">Quick Links</h4>
-            <ul className="space-y-2">
+            <h4 className="font-display text-lg text-forest-deep mb-4">Quick Links</h4>
+            <ul className="space-y-3">
               {['Our Story', 'Seeds', 'Quality', 'Contact'].map((link) => (
                 <li key={link}>
-                  <a href={`#${link.toLowerCase().replace(' ', '-')}`} className="text-sm text-rich-earth/70 hover:text-sage-green transition-colors">
+                  <a href={`#${link.toLowerCase().replace(' ', '-')}`} className="text-base text-rich-earth/70 hover:text-sage-green transition-colors">
                     {link}
                   </a>
                 </li>
@@ -998,21 +1190,25 @@ function Footer() {
 
           {/* Seed Categories */}
           <div>
-            <h4 className="font-display text-forest-deep mb-4">Our Seeds</h4>
-            <ul className="space-y-2">
+            <h4 className="font-display text-lg text-forest-deep mb-4">Our Seeds</h4>
+            <ul className="space-y-3">
               {['Paddy', 'Mustard', 'Jute', 'Fodder', 'Maize'].map((seed) => (
                 <li key={seed}>
-                  <span className="text-sm text-rich-earth/70">{seed} Seeds</span>
+                  <span className="text-base text-rich-earth/70">{seed} Seeds</span>
                 </li>
               ))}
             </ul>
           </div>
         </div>
 
-        <div className="mt-12 pt-8 border-t border-sage-green/10 text-center">
-          <p className="text-sm text-rich-earth/50">
+        <div className="mt-12 pt-8 border-t border-sage-green/10 flex flex-col md:flex-row items-center justify-between gap-4">
+          <p className="text-base text-rich-earth/50 text-center md:text-left">
             © {new Date().getFullYear()} Sashyashree Agri Processing Pvt. Ltd. All rights reserved.
           </p>
+          <div className="flex gap-6">
+            <a href="#" className="text-base text-rich-earth/50 hover:text-sage-green transition-colors">Privacy Policy</a>
+            <a href="#" className="text-base text-rich-earth/50 hover:text-sage-green transition-colors">Terms of Service</a>
+          </div>
         </div>
       </div>
     </footer>

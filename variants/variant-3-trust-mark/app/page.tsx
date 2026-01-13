@@ -39,6 +39,7 @@ function Counter({ end, suffix = '', prefix = '' }: { end: number; suffix?: stri
 // Navigation
 function Navigation() {
   const [scrolled, setScrolled] = useState(false)
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50)
@@ -51,19 +52,24 @@ function Navigation() {
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled ? 'bg-pure-white shadow-sm' : 'bg-transparent'
+        scrolled ? 'bg-pure-white shadow-sm' : ''
       }`}
     >
       <div className="max-w-7xl mx-auto px-6 py-4">
         <div className="flex items-center justify-between">
           {/* Logo */}
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-institution-green flex items-center justify-center">
-              <span className="text-pure-white font-display text-lg">S</span>
+            <div className="relative w-12 h-12 rounded-full overflow-hidden bg-white shadow border border-gray-200">
+              <Image
+                src="/images/logo.png"
+                alt="Sashyashree Logo"
+                fill
+                className="object-contain p-1"
+              />
             </div>
             <div>
-              <span className="font-display text-xl text-institution-green tracking-tight">Sashyashree Agri</span>
-              <span className="block text-xs font-mono text-steel-gray opacity-60">EST. 1992</span>
+              <span className={`font-display text-xl tracking-tight ${scrolled ? 'text-institution-green' : 'text-institution-green'}`}>Sashyashree Agri</span>
+              <span className={`block text-xs font-mono ${scrolled ? 'text-steel-gray opacity-60' : 'text-steel-gray opacity-70'}`}>EST. 1992</span>
             </div>
           </div>
 
@@ -73,24 +79,73 @@ function Navigation() {
               <a
                 key={item}
                 href={`#${item.toLowerCase()}`}
-                className="font-body text-sm text-steel-gray hover:text-institution-green transition-colors"
+                className={`font-body text-base font-medium transition-colors ${
+                  scrolled ? 'text-steel-gray hover:text-institution-green' : 'text-steel-gray hover:text-institution-green'
+                }`}
               >
                 {item}
               </a>
             ))}
           </div>
 
-          {/* CTA */}
-          <div className="flex items-center gap-4">
+          {/* CTA & Mobile Menu */}
+          <div className="flex items-center gap-3">
             <a
               href="#contact"
-              className="hidden sm:inline-flex px-5 py-2 bg-institution-green text-pure-white font-accent text-sm hover:bg-opacity-90 transition-colors"
+              className="hidden sm:inline-flex px-5 py-2.5 bg-institution-green text-pure-white font-accent text-base hover:bg-opacity-90 transition-colors"
             >
               Contact Us
             </a>
+
+            {/* Mobile Hamburger */}
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className={`md:hidden p-2 rounded-lg transition-colors ${
+                scrolled ? 'text-institution-green hover:bg-institution-green/10' : 'text-institution-green hover:bg-institution-green/10'
+              }`}
+              aria-label="Toggle menu"
+            >
+              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                {mobileMenuOpen ? (
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                ) : (
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                )}
+              </svg>
+            </button>
           </div>
         </div>
       </div>
+
+      {/* Mobile Menu Drawer */}
+      <motion.div
+        initial={false}
+        animate={mobileMenuOpen ? { height: 'auto', opacity: 1 } : { height: 0, opacity: 0 }}
+        transition={{ duration: 0.3 }}
+        className="md:hidden overflow-hidden bg-pure-white/98 backdrop-blur-md"
+      >
+        <div className="px-6 py-4 space-y-3 border-t border-institution-green/10">
+          {['About', 'Products', 'Quality', 'Partners'].map((item) => (
+            <a
+              key={item}
+              href={`#${item.toLowerCase()}`}
+              onClick={() => setMobileMenuOpen(false)}
+              className="block font-body text-base font-medium text-steel-gray hover:text-institution-green transition-colors py-2"
+            >
+              {item}
+            </a>
+          ))}
+          <a
+            href="tel:+918001926461"
+            className="flex items-center justify-center gap-2 mt-4 px-6 py-3 bg-institution-green text-pure-white font-body font-semibold text-base hover:bg-opacity-90 transition-colors"
+          >
+            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/>
+            </svg>
+            Call Now
+          </a>
+        </div>
+      </motion.div>
     </motion.nav>
   )
 }
@@ -105,7 +160,7 @@ function HeroSection() {
   }, [])
 
   return (
-    <section className="min-h-screen flex items-center justify-center relative linen-texture pt-20">
+    <section className="min-h-screen flex items-center justify-center relative linen-texture pt-20 overflow-hidden">
       {/* Subtle Pattern */}
       <div className="absolute inset-0 opacity-5">
         <div className="absolute inset-0" style={{
@@ -204,21 +259,6 @@ function HeroSection() {
         </motion.div>
       </div>
 
-      {/* Scroll Indicator */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 2.5 }}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2"
-      >
-        <motion.div
-          animate={{ y: [0, 10, 0] }}
-          transition={{ duration: 2, repeat: Infinity }}
-          className="w-6 h-10 border-2 border-institution-green rounded-full flex justify-center pt-2"
-        >
-          <div className="w-1.5 h-1.5 bg-institution-green rounded-full" />
-        </motion.div>
-      </motion.div>
     </section>
   )
 }
@@ -343,38 +383,44 @@ function ProductsSection() {
     {
       name: 'Paddy Seeds',
       varieties: ['Jamini', 'Badsha Bhog', 'Swarnamoti', 'Disha'],
-      image: 'https://images.unsplash.com/photo-1536304993881-ff6e9eefa2a6?w=400&h=300&fit=crop',
+      image: '/images/products/jamini.png',
+      isProduct: true,
       code: 'PD-001',
     },
     {
-      name: 'Oil Seeds',
-      varieties: ['Sohini Mustard', 'Usha Sesame', 'Groundnut'],
-      image: 'https://images.unsplash.com/photo-1615485290382-441e4d049cb5?w=400&h=300&fit=crop',
+      name: 'Mustard Seeds',
+      varieties: ['Sohini (B-9 Special)', 'Premium Quality'],
+      image: '/images/products/sohini.png',
+      isProduct: true,
       code: 'OS-002',
     },
     {
-      name: 'Jute Seeds',
-      varieties: ['Premium Quality', 'Imported Stock'],
-      image: 'https://images.unsplash.com/photo-1599488615731-7e5c2823ff28?w=400&h=300&fit=crop',
-      code: 'JT-003',
+      name: 'Aromatic Rice',
+      varieties: ['Badsha Bhog', 'Premium Aromatic'],
+      image: '/images/products/badsha-bhog.png',
+      isProduct: true,
+      code: 'AR-003',
     },
     {
       name: 'Fodder Seeds',
       varieties: ['SSG-106 Sudan Grass', 'Hybrid Bajra'],
-      image: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=400&h=300&fit=crop',
+      image: '/images/products/ssg-106.png',
+      isProduct: true,
       code: 'FD-004',
     },
     {
       name: 'Maize Seeds',
       varieties: ['SMS-4025', 'SMS-4055 Hybrid'],
-      image: 'https://images.unsplash.com/photo-1551754655-cd27e38d2076?w=400&h=300&fit=crop',
+      image: '/images/products/sms-4055.png',
+      isProduct: true,
       code: 'MZ-005',
     },
     {
-      name: 'Vegetable Seeds',
-      varieties: ['Leafy Varieties', 'Popular Selections'],
-      image: 'https://images.unsplash.com/photo-1592921870789-04563d55041c?w=400&h=300&fit=crop',
-      code: 'VG-006',
+      name: 'Sesame Seeds',
+      varieties: ['Usha', 'High-Yield Varieties'],
+      image: '/images/products/usha.png',
+      isProduct: true,
+      code: 'SS-006',
     },
   ]
 
@@ -410,14 +456,22 @@ function ProductsSection() {
               className="certificate-card overflow-hidden transition-all duration-300"
             >
               {/* Image */}
-              <div className="relative h-48 overflow-hidden">
-                <Image
-                  src={product.image}
-                  alt={product.name}
-                  fill
-                  className="object-cover transition-transform duration-500 group-hover:scale-105"
-                />
-                <div className="absolute top-4 right-4 bg-pure-white px-3 py-1">
+              <div className="relative h-48 overflow-hidden bg-gradient-to-br from-document-cream to-white">
+                <div className="absolute inset-0 flex items-center justify-center p-4">
+                  <motion.div
+                    className="relative w-24 h-36"
+                    whileHover={{ scale: 1.08, rotate: 2 }}
+                    transition={{ type: 'spring', stiffness: 300 }}
+                  >
+                    <Image
+                      src={product.image}
+                      alt={product.name}
+                      fill
+                      className="object-contain drop-shadow-lg"
+                    />
+                  </motion.div>
+                </div>
+                <div className="absolute top-4 right-4 bg-pure-white px-3 py-1 shadow-sm">
                   <span className="font-mono text-xs text-institution-green">{product.code}</span>
                 </div>
               </div>
@@ -580,21 +634,30 @@ function QualitySection() {
 function TestimonialsSection() {
   const testimonials = [
     {
-      name: 'Ramesh Kumar Singh',
-      location: 'Arambag, West Bengal',
-      quote: 'I have been using Sashyashree seeds for over 10 years. The germination rate is consistently excellent, and my paddy yields have increased by 20%.',
+      name: 'Sunirmal Paria',
+      nameBn: 'সুনির্মল পাড়িয়া',
+      location: 'West Midnapore, West Bengal',
+      quote: 'I have been cultivating Swarnamoti and Badsha Bhog paddy seeds for years. Getting 2000-2100 kg yield per acre consistently.',
+      yield: '2100 kg/acre',
+      image: '/images/farmers/sunirmal.jpg',
       verified: true,
     },
     {
-      name: 'Anil Prasad Yadav',
-      location: 'Patna, Bihar',
-      quote: 'The quality of mustard seeds from Sashyashree is unmatched. I recommend them to all farmers in my village.',
+      name: 'Malay Singh',
+      nameBn: 'মলয় সিংহ',
+      location: 'West Burdwan, West Bengal',
+      quote: 'Every farmer in our area prefers Sohini mustard seeds. Getting 350 kg per bigha - unmatched quality.',
+      yield: '350 kg/bigha',
+      image: '/images/farmers/malai.jpg',
       verified: true,
     },
     {
-      name: 'Debashish Mandal',
-      location: 'Hooghly, West Bengal',
-      quote: 'Reliable seeds, honest pricing, and excellent customer support. Sashyashree Agri is a name I trust.',
+      name: 'Sadhan Mondal',
+      nameBn: 'সাধন মন্ডল',
+      location: 'Bankura, West Bengal',
+      quote: 'The production of Sashyashree Usha sesame seeds is truly unbelievable. Very profitable harvest every season.',
+      yield: 'High Profit',
+      image: '/images/farmers/sadhan.jpg',
       verified: true,
     },
   ]
@@ -623,22 +686,36 @@ function TestimonialsSection() {
               transition={{ delay: index * 0.15 }}
               className="certificate-card p-8"
             >
-              {/* Quote Icon */}
-              <div className="text-certificate-gold mb-6">
-                <svg className="w-10 h-10 opacity-30" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
-                </svg>
+              {/* Farmer Photo */}
+              <div className="flex items-center gap-4 mb-6">
+                <div className="relative w-16 h-16 rounded-full overflow-hidden border-2 border-certificate-gold/30">
+                  <Image
+                    src={testimonial.image}
+                    alt={testimonial.name}
+                    fill
+                    className="object-cover"
+                  />
+                </div>
+                <div>
+                  <div className="font-accent text-institution-green">{testimonial.name}</div>
+                  <div className="text-xs text-steel-gray/70 font-mono">{testimonial.nameBn}</div>
+                </div>
               </div>
 
               {/* Quote */}
-              <p className="text-steel-gray mb-6 italic">"{testimonial.quote}"</p>
+              <div className="relative mb-6">
+                <svg className="absolute -top-2 -left-2 w-8 h-8 text-certificate-gold/20" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
+                </svg>
+                <p className="text-steel-gray italic pl-6">"{testimonial.quote}"</p>
+              </div>
 
-              {/* Author */}
-              <div className="border-t border-gray-100 pt-6">
+              {/* Footer */}
+              <div className="border-t border-gray-100 pt-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <div className="font-accent text-institution-green">{testimonial.name}</div>
                     <div className="text-sm text-steel-gray">{testimonial.location}</div>
+                    <div className="text-xs font-mono text-certificate-gold mt-1">Yield: {testimonial.yield}</div>
                   </div>
                   {testimonial.verified && (
                     <div className="flex items-center gap-1 text-institution-green">
@@ -661,12 +738,36 @@ function TestimonialsSection() {
 // Partnership Section
 function PartnershipSection() {
   const benefits = [
-    { title: 'Exclusive Pricing', description: 'Special dealer rates and volume discounts' },
-    { title: 'Priority Stock', description: 'First access to new varieties and limited stock' },
-    { title: 'Marketing Support', description: 'POS materials and promotional assistance' },
-    { title: 'Technical Training', description: 'Product knowledge and agronomic support' },
-    { title: 'Credit Facilities', description: 'Flexible payment terms for qualified partners' },
-    { title: 'Territory Rights', description: 'Protected distribution areas where applicable' },
+    {
+      title: 'Exclusive Pricing',
+      description: 'Special dealer rates and volume discounts',
+      image: 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=300&q=80',
+    },
+    {
+      title: 'Priority Stock',
+      description: 'First access to new varieties and limited stock',
+      image: 'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=300&q=80',
+    },
+    {
+      title: 'Marketing Support',
+      description: 'POS materials and promotional assistance',
+      image: 'https://images.unsplash.com/photo-1560493676-04071c5f467b?w=300&q=80',
+    },
+    {
+      title: 'Technical Training',
+      description: 'Product knowledge and agronomic support',
+      image: 'https://images.unsplash.com/photo-1574943320219-553eb213f72d?w=300&q=80',
+    },
+    {
+      title: 'Credit Facilities',
+      description: 'Flexible payment terms for qualified partners',
+      image: 'https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=300&q=80',
+    },
+    {
+      title: 'Territory Rights',
+      description: 'Protected distribution areas where applicable',
+      image: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=300&q=80',
+    },
   ]
 
   return (
@@ -696,7 +797,7 @@ function PartnershipSection() {
             </a>
           </div>
 
-          {/* Right - Benefits Grid */}
+          {/* Right - Benefits Grid with Images */}
           <div className="grid grid-cols-2 gap-4">
             {benefits.map((benefit, index) => (
               <motion.div
@@ -705,10 +806,25 @@ function PartnershipSection() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1 }}
-                className="p-6 bg-pure-white bg-opacity-10 backdrop-blur-sm"
+                className="group relative overflow-hidden"
               >
-                <div className="font-accent text-pure-white mb-2">{benefit.title}</div>
-                <div className="text-sm text-pure-white opacity-70">{benefit.description}</div>
+                {/* Background Image */}
+                <div className="absolute inset-0">
+                  <Image
+                    src={benefit.image}
+                    alt={benefit.title}
+                    fill
+                    className="object-cover transition-transform duration-500 group-hover:scale-110"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-institution-green/90 via-institution-green/50 to-institution-green/30 group-hover:from-institution-green/80 group-hover:via-institution-green/40 transition-colors" />
+                </div>
+                {/* Content */}
+                <div className="relative p-6">
+                  <div className="font-accent text-pure-white mb-2">{benefit.title}</div>
+                  <div className="text-sm text-pure-white opacity-70">{benefit.description}</div>
+                </div>
+                {/* Gold accent line */}
+                <div className="absolute bottom-0 left-0 w-0 h-0.5 bg-certificate-gold group-hover:w-full transition-all duration-300" />
               </motion.div>
             ))}
           </div>
@@ -811,12 +927,19 @@ function ContactSection() {
               </div>
               <div>
                 <label className="block text-sm font-accent text-institution-green mb-2">Inquiry Type</label>
-                <select className="w-full px-4 py-3 border border-gray-200 focus:border-institution-green focus:outline-none transition-colors font-body">
-                  <option>General Inquiry</option>
-                  <option>Product Information</option>
-                  <option>Dealership Application</option>
-                  <option>Complaint / Feedback</option>
-                </select>
+                <div className="relative">
+                  <select className="w-full px-4 py-3 pr-10 border border-gray-200 focus:border-institution-green focus:outline-none transition-colors font-body bg-white appearance-none cursor-pointer">
+                    <option>General Inquiry</option>
+                    <option>Product Information</option>
+                    <option>Dealership Application</option>
+                    <option>Complaint / Feedback</option>
+                  </select>
+                  <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
+                    <svg className="w-5 h-5 text-institution-green" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </div>
+                </div>
               </div>
               <div>
                 <label className="block text-sm font-accent text-institution-green mb-2">Message</label>
@@ -849,23 +972,55 @@ function Footer() {
           {/* Company */}
           <div className="md:col-span-2">
             <div className="flex items-center gap-3 mb-6">
-              <div className="w-12 h-12 rounded-full bg-institution-green flex items-center justify-center">
-                <span className="text-pure-white font-display text-xl">S</span>
+              <div className="relative w-14 h-14 rounded-full overflow-hidden bg-white shadow border border-gray-200">
+                <Image
+                  src="/images/logo.png"
+                  alt="Sashyashree Logo"
+                  fill
+                  className="object-contain p-1"
+                />
               </div>
               <div>
                 <span className="font-display text-xl text-institution-green">Sashyashree Agri</span>
                 <span className="block text-xs font-mono text-steel-gray">Processing Pvt. Ltd.</span>
               </div>
             </div>
-            <p className="text-steel-gray text-sm mb-6 max-w-sm">
+            <p className="text-steel-gray text-base mb-6 max-w-sm">
               Premium quality agricultural seeds since 1992. Serving farmers
               across West Bengal, Bihar, Jharkhand, Orissa, and Assam.
             </p>
-            <div className="verification-badge">
+            <div className="verification-badge mb-6">
               <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
               </svg>
               Government Registered
+            </div>
+            {/* Social Links */}
+            <div className="flex gap-3">
+              <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="w-10 h-10 border border-gray-300 flex items-center justify-center text-steel-gray hover:bg-institution-green hover:text-pure-white hover:border-institution-green transition-colors">
+                <span className="sr-only">Facebook</span>
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                </svg>
+              </a>
+              <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="w-10 h-10 border border-gray-300 flex items-center justify-center text-steel-gray hover:bg-institution-green hover:text-pure-white hover:border-institution-green transition-colors">
+                <span className="sr-only">Twitter</span>
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                </svg>
+              </a>
+              <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="w-10 h-10 border border-gray-300 flex items-center justify-center text-steel-gray hover:bg-institution-green hover:text-pure-white hover:border-institution-green transition-colors">
+                <span className="sr-only">Instagram</span>
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                </svg>
+              </a>
+              <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" className="w-10 h-10 border border-gray-300 flex items-center justify-center text-steel-gray hover:bg-institution-green hover:text-pure-white hover:border-institution-green transition-colors">
+                <span className="sr-only">YouTube</span>
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                </svg>
+              </a>
             </div>
           </div>
 
@@ -875,7 +1030,7 @@ function Footer() {
             <ul className="space-y-3">
               {['About Us', 'Products', 'Quality Standards', 'Dealers', 'Contact'].map((link) => (
                 <li key={link}>
-                  <a href="#" className="text-steel-gray text-sm hover:text-institution-green transition-colors">
+                  <a href="#" className="text-steel-gray text-base hover:text-institution-green transition-colors">
                     {link}
                   </a>
                 </li>
@@ -889,7 +1044,7 @@ function Footer() {
             <ul className="space-y-3">
               {['Privacy Policy', 'Terms of Service', 'Refund Policy', 'Disclaimer'].map((link) => (
                 <li key={link}>
-                  <a href="#" className="text-steel-gray text-sm hover:text-institution-green transition-colors">
+                  <a href="#" className="text-steel-gray text-base hover:text-institution-green transition-colors">
                     {link}
                   </a>
                 </li>
@@ -900,8 +1055,8 @@ function Footer() {
 
         {/* Bottom Bar */}
         <div className="mt-16 pt-8 border-t border-gray-200 flex flex-col md:flex-row items-center justify-between gap-4">
-          <div className="text-sm text-steel-gray">
-            © 2024 Sashyashree Agri Processing Pvt. Ltd. All rights reserved.
+          <div className="text-base text-steel-gray">
+            © {new Date().getFullYear()} Sashyashree Agri Processing Pvt. Ltd. All rights reserved.
           </div>
           <div className="text-xs font-mono text-steel-gray opacity-60">
             CIN: U01100WB1992PTC012345

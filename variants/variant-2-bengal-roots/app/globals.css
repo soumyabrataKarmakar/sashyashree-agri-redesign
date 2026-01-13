@@ -72,7 +72,7 @@ html {
 .btn-organic-secondary {
   background: transparent;
   border: 2px solid var(--sage-green);
-  color: var(--forest-deep);
+  color: var(--soft-white);
 }
 
 .btn-organic-secondary:hover {

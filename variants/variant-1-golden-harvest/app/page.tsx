@@ -101,6 +101,7 @@ function AnimatedCounter({ value, suffix = '' }: { value: number; suffix?: strin
 // ============================================
 function Navigation() {
   const [scrolled, setScrolled] = useState(false)
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50)
@@ -113,7 +114,7 @@ function Navigation() {
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-        scrolled ? 'bg-cream-field/95 backdrop-blur-md shadow-lg' : 'bg-transparent'
+        scrolled ? 'bg-cream-field/95 backdrop-blur-md shadow-lg' : ''
       }`}
     >
       <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
@@ -121,21 +122,29 @@ function Navigation() {
           className="flex items-center gap-3"
           whileHover={{ scale: 1.02 }}
         >
-          <div className="w-12 h-12 rounded-full bg-deep-green flex items-center justify-center">
-            <span className="text-harvest-gold font-display font-bold text-xl">S</span>
+          <div className="relative w-14 h-14 rounded-full overflow-hidden bg-white shadow-md border-2 border-harvest-gold/30">
+            <Image
+              src="/images/logo.png"
+              alt="Sashyashree Logo"
+              fill
+              className="object-contain p-1"
+            />
           </div>
           <div>
-            <h1 className="font-display font-bold text-xl text-rich-soil">Sashyashree</h1>
-            <p className="text-xs text-rich-soil/60 font-body">Since 1992</p>
+            <h1 className={`font-display font-bold text-xl ${scrolled ? 'text-rich-soil' : 'text-cream-field'}`}>Sashyashree</h1>
+            <p className={`text-xs font-body ${scrolled ? 'text-rich-soil/60' : 'text-cream-field/70'}`}>Since 1992</p>
           </div>
         </motion.div>
 
+        {/* Desktop Navigation */}
         <div className="hidden md:flex items-center gap-8">
           {['Home', 'Products', 'About', 'Contact'].map((item) => (
             <motion.a
               key={item}
               href={`#${item.toLowerCase()}`}
-              className="font-body text-sm font-medium text-rich-soil/80 hover:text-harvest-gold transition-colors relative group"
+              className={`font-body text-base font-medium transition-colors relative group ${
+                scrolled ? 'text-rich-soil/80 hover:text-harvest-gold' : 'text-cream-field/90 hover:text-harvest-gold'
+              }`}
               whileHover={{ y: -2 }}
             >
               {item}
@@ -144,9 +153,10 @@ function Navigation() {
           ))}
         </div>
 
+        {/* Desktop CTA */}
         <motion.a
           href="tel:+918001926461"
-          className="hidden md:flex items-center gap-2 px-5 py-2.5 bg-harvest-gold text-rich-soil font-body font-semibold text-sm rounded-full hover:bg-sunset-orange transition-colors"
+          className="hidden md:flex items-center gap-2 px-5 py-2.5 bg-harvest-gold text-rich-soil font-body font-semibold text-base rounded-full hover:bg-sunset-orange transition-colors"
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.98 }}
         >
@@ -155,7 +165,53 @@ function Navigation() {
           </svg>
           Call Now
         </motion.a>
+
+        {/* Mobile Hamburger Button */}
+        <button
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          className={`md:hidden p-2 rounded-lg transition-colors ${
+            scrolled ? 'text-rich-soil hover:bg-rich-soil/10' : 'text-cream-field hover:bg-cream-field/10'
+          }`}
+          aria-label="Toggle menu"
+        >
+          <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            {mobileMenuOpen ? (
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            ) : (
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+            )}
+          </svg>
+        </button>
       </div>
+
+      {/* Mobile Menu */}
+      <motion.div
+        initial={false}
+        animate={mobileMenuOpen ? { height: 'auto', opacity: 1 } : { height: 0, opacity: 0 }}
+        className="md:hidden overflow-hidden bg-cream-field shadow-lg"
+      >
+        <div className="px-6 py-4 space-y-1">
+          {['Home', 'Products', 'About', 'Contact'].map((item) => (
+            <a
+              key={item}
+              href={`#${item.toLowerCase()}`}
+              onClick={() => setMobileMenuOpen(false)}
+              className="block py-3 text-lg font-body font-medium text-rich-soil hover:text-harvest-gold transition-colors border-b border-harvest-gold/20"
+            >
+              {item}
+            </a>
+          ))}
+          <a
+            href="tel:+918001926461"
+            className="flex items-center justify-center gap-2 mt-4 px-6 py-3 bg-harvest-gold text-rich-soil font-body font-semibold text-base rounded-full hover:bg-sunset-orange transition-colors"
+          >
+            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/>
+            </svg>
+            Call Now
+          </a>
+        </div>
+      </motion.div>
     </motion.nav>
   )
 }
@@ -409,8 +465,8 @@ function StoryPreview() {
           >
             <div className="relative aspect-[4/5] rounded-2xl overflow-hidden shadow-2xl">
               <Image
-                src="https://images.unsplash.com/photo-1589923188651-268a9765e432?w=800&q=80"
-                alt="Farmer in field"
+                src="https://images.unsplash.com/photo-1500937386664-56d1dfef3854?w=800&q=80"
+                alt="Indian farmer working in golden rice field"
                 fill
                 className="object-cover"
               />
@@ -444,39 +500,44 @@ function ProductCategories() {
     {
       name: 'Paddy Seeds',
       description: 'Hybrid, Improved & Notified varieties including aromatic Badsha Bhog and Swarnamoti',
-      image: 'https://images.unsplash.com/photo-1536304993881-ff6e9eefa2a6?w=600&q=80',
-      featured: true,
+      image: '/images/products/jamini.png',
+      isProduct: true,
       count: '10+ Varieties',
     },
     {
       name: 'Oil Seeds',
       description: 'Premium Mustard (Sohini), Sesame (Usha) & Groundnut seeds',
-      image: 'https://images.unsplash.com/photo-1615485290382-441e4d049cb5?w=600&q=80',
+      image: '/images/products/sohini.png',
+      isProduct: true,
       count: '5+ Varieties',
     },
     {
-      name: 'Jute Seeds',
-      description: 'High-quality jute seeds for West Bengal\'s commercial farmers',
-      image: 'https://images.unsplash.com/photo-1595841696677-6589f0e26c3e?w=600&q=80',
+      name: 'Aromatic Rice',
+      description: 'Badsha Bhog - Premium aromatic rice for special occasions',
+      image: '/images/products/badsha-bhog.png',
+      isProduct: true,
       count: '3+ Varieties',
     },
     {
       name: 'Fodder Seeds',
       description: 'SSG-106 Sudan Grass & Hybrid Bajra for livestock nutrition',
-      image: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=600&q=80',
+      image: '/images/products/ssg-106.png',
+      isProduct: true,
       count: '4+ Varieties',
     },
     {
       name: 'Maize Seeds',
       description: 'SMS-4025 & SMS-4055 Hybrid varieties for food and feed',
-      image: 'https://images.unsplash.com/photo-1551754655-cd27e38d2076?w=600&q=80',
+      image: '/images/products/sms-4055.png',
+      isProduct: true,
       count: '3+ Varieties',
     },
     {
-      name: 'Vegetable Seeds',
-      description: 'Popular leafy vegetables at affordable prices',
-      image: 'https://images.unsplash.com/photo-1592921870789-04563d55041c?w=600&q=80',
-      count: '6+ Varieties',
+      name: 'Sesame Seeds',
+      description: 'Usha - High-yielding sesame for oil production',
+      image: '/images/products/usha.png',
+      isProduct: true,
+      count: '2+ Varieties',
     },
   ]
 
@@ -519,37 +580,45 @@ function ProductCategories() {
                 product.featured ? 'md:col-span-2 lg:col-span-1 lg:row-span-2' : ''
               }`}
             >
-              <div className={`relative ${product.featured ? 'aspect-[4/5]' : 'aspect-[4/3]'}`}>
-                <Image
-                  src={product.image}
-                  alt={product.name}
-                  fill
-                  className="object-cover transition-transform duration-700 group-hover:scale-110"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-rich-soil via-rich-soil/20 to-transparent" />
+              {/* Product Packet Display */}
+              <div className={`relative ${product.featured ? 'aspect-[4/5]' : 'aspect-[4/3]'} bg-gradient-to-br from-harvest-gold/10 via-white to-sunset-orange/10`}>
+                {/* Product Image */}
+                <div className="absolute inset-0 flex items-center justify-center p-6">
+                  <motion.div
+                    className="relative w-32 h-44"
+                    whileHover={{ scale: 1.1, rotate: 3 }}
+                    transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+                  >
+                    <Image
+                      src={product.image}
+                      alt={product.name}
+                      fill
+                      className="object-contain drop-shadow-xl"
+                    />
+                  </motion.div>
+                </div>
+
+                {/* Bottom gradient for text */}
+                <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-rich-soil/90 via-rich-soil/60 to-transparent" />
 
                 {/* Content Overlay */}
-                <div className="absolute inset-0 p-6 flex flex-col justify-end">
-                  <span className="inline-block self-start px-3 py-1 bg-harvest-gold/90 text-rich-soil text-xs font-body font-semibold rounded-full mb-3">
+                <div className="absolute inset-x-0 bottom-0 p-6 flex flex-col">
+                  <span className="inline-block self-start px-3 py-1 bg-harvest-gold text-rich-soil text-xs font-body font-semibold rounded-full mb-2">
                     {product.count}
                   </span>
-                  <h3 className="text-cream-field text-2xl md:text-3xl font-display font-bold mb-2">
+                  <h3 className="text-cream-field text-xl md:text-2xl font-display font-bold mb-1">
                     {product.name}
                   </h3>
                   <p className="text-cream-field/80 font-body text-sm line-clamp-2">
                     {product.description}
                   </p>
+                </div>
 
-                  {/* Hover Arrow */}
-                  <motion.div
-                    initial={{ opacity: 0, x: -10 }}
-                    whileHover={{ opacity: 1, x: 0 }}
-                    className="absolute bottom-6 right-6 w-12 h-12 bg-harvest-gold rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                  >
-                    <svg className="w-5 h-5 text-rich-soil" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                    </svg>
-                  </motion.div>
+                {/* Hover Arrow */}
+                <div className="absolute top-4 right-4 w-10 h-10 bg-harvest-gold rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <svg className="w-4 h-4 text-rich-soil" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                  </svg>
                 </div>
               </div>
             </motion.div>
@@ -581,21 +650,22 @@ function ProductCategories() {
 }
 
 // ============================================
-// TESTIMONIALS SECTION
+// TESTIMONIALS SECTION - Horizontal Scroll
 // ============================================
 function Testimonials() {
   const ref = useRef(null)
+  const scrollRef = useRef<HTMLDivElement>(null)
   const isInView = useInView(ref, { once: true, margin: '-100px' })
 
   const testimonials = [
     {
       name: 'সুনির্মল পাড়িয়া',
-      nameEn: 'Sunirmal Pariya',
+      nameEn: 'Sunirmal Paria',
       location: 'উচুডিহা, দাঁতন, পশ্চিম মেদিনীপুর',
       quote: 'আমি শস্যশ্রী কোম্পানির "স্বর্ণমতি" ও "বাদশাভোগ" ধানবীজ বিগত কয়েক বছর যাবৎ চাষ করে আসছি। একর প্রতি প্রায় ২০০০-২১০০ কেজি ফলন পেয়েছি।',
       quoteEn: 'I have been cultivating Swarnamoti and Badsha Bhog paddy seeds for years. Getting 2000-2100 kg yield per acre.',
       yield: '2100 kg/acre',
-      image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=80',
+      image: '/images/farmers/sunirmal.jpg',
     },
     {
       name: 'সাধন মন্ডল',
@@ -604,27 +674,57 @@ function Testimonials() {
       quote: 'শস্যশ্রী "উষা" তিলবীজের উৎপাদন সত্যই অবিশ্বাস্য। এবছর আমি ৫ বিঘা চাষ করেছি এবং যথেষ্ট লাভ ওঠাতে পারছি।',
       quoteEn: 'The production of Sashyashree Usha sesame seeds is truly unbelievable. Very profitable.',
       yield: 'High Profit',
-      image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&q=80',
+      image: '/images/farmers/sadhan.jpg',
     },
     {
       name: 'কালিপদ মিশ্র',
-      nameEn: 'Kalipada Mishra',
+      nameEn: 'Kalipad Mishra',
       location: 'বদরা, পুঞ্চা, পুরুলিয়া',
       quote: 'বিগত কয়েক বছর আমি শস্যশ্রী কোম্পানির "মিতালি" ও "সোনালী" চাষ করে আসছি। বিঘা প্রতি ১২ কুইন্টাল করে ফলন পেয়েছি।',
       quoteEn: 'Cultivating Mitali and Sonali for years. Getting 12 quintal per bigha yield.',
       yield: '12 Q/bigha',
-      image: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&q=80',
+      image: '/images/farmers/kalipad.jpg',
     },
     {
       name: 'মলয় সিংহ',
-      nameEn: 'Malay Singha',
+      nameEn: 'Malay Singh',
       location: 'শ্রীরামপুর, কাঁকসা, পশ্চিম বর্ধমান',
       quote: 'আমাদের এলাকার প্রত্যেক চাষীরাই "সোহিনী" ছাড়া অন্য সরিষা বীজে আগ্রহ নেই। বিঘা প্রতি ৩৫০ কেজি করে ফলন পাই।',
       quoteEn: 'Every farmer in our area prefers Sohini mustard. Getting 350 kg per bigha.',
       yield: '350 kg/bigha',
-      image: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&q=80',
+      image: '/images/farmers/malai.jpg',
+    },
+    {
+      name: 'চন্দন বৈদ্য',
+      nameEn: 'Chandan Baidy',
+      location: 'দক্ষিণ ২৪ পরগনা',
+      quote: 'গত বোরো মরসুমে দিশা ধানবীজ চাষ করে ভালো ফলন পেয়েছিলাম। Sashyashree seeds transformed my harvest!',
+      quoteEn: 'Got excellent yield cultivating Disha paddy last boro season.',
+      yield: 'Excellent',
+      image: '/images/farmers/chandan.jpg',
     },
   ]
+
+  const scroll = (direction: 'left' | 'right') => {
+    if (scrollRef.current) {
+      const container = scrollRef.current
+      const cardWidth = 420 // Card width + gap
+      const maxScroll = container.scrollWidth - container.clientWidth
+
+      let newScroll = direction === 'left'
+        ? container.scrollLeft - cardWidth
+        : container.scrollLeft + cardWidth
+
+      // Infinite scroll: wrap around
+      if (newScroll < 0) {
+        newScroll = maxScroll
+      } else if (newScroll > maxScroll) {
+        newScroll = 0
+      }
+
+      container.scrollTo({ left: newScroll, behavior: 'smooth' })
+    }
+  }
 
   return (
     <section ref={ref} className="relative py-24 md:py-32 bg-deep-green overflow-hidden">
@@ -656,70 +756,96 @@ function Testimonials() {
           </p>
         </motion.div>
 
-        {/* Horizontal Scroll Testimonials */}
-        <div className="horizontal-scroll pb-6">
-          <div className="flex gap-6 min-w-max">
+        {/* Horizontal Scroll Container */}
+        <div className="relative">
+          {/* Left Arrow - Fixed position, no scale animation */}
+          <button
+            onClick={() => scroll('left')}
+            className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-2 md:-translate-x-6 z-10 w-12 h-12 rounded-full bg-harvest-gold/30 hover:bg-harvest-gold flex items-center justify-center transition-colors duration-300 backdrop-blur-sm border border-harvest-gold/30 hover:border-harvest-gold"
+            aria-label="Scroll left"
+          >
+            <svg className="w-6 h-6 text-cream-field" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+          </button>
+
+          {/* Testimonials Scroll Container - Horizontal only, hidden scrollbar */}
+          <div
+            ref={scrollRef}
+            className="flex gap-6 overflow-x-auto overflow-y-hidden pb-4 scroll-smooth px-2 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+          >
             {testimonials.map((testimonial, index) => (
               <motion.div
                 key={testimonial.nameEn}
-                initial={{ opacity: 0, x: 50 }}
-                animate={isInView ? { opacity: 1, x: 0 } : {}}
-                transition={{ duration: 0.6, delay: index * 0.15 }}
-                className="w-[380px] bg-cream-field/10 backdrop-blur-sm rounded-2xl p-8 border border-cream-field/10"
+                initial={{ opacity: 0, y: 30 }}
+                animate={isInView ? { opacity: 1, y: 0 } : {}}
+                transition={{ duration: 0.6, delay: index * 0.1 }}
+                className="flex-shrink-0 w-[380px] md:w-[400px]"
               >
-                {/* Quote Icon */}
-                <div className="text-harvest-gold text-5xl font-display leading-none mb-4">&ldquo;</div>
+                <div className="bg-cream-field/10 backdrop-blur-sm rounded-2xl p-6 md:p-8 border border-cream-field/10 h-full hover:bg-cream-field/15 transition-colors duration-300">
+                  {/* Quote Icon */}
+                  <div className="text-harvest-gold text-5xl font-display leading-none mb-4">&ldquo;</div>
 
-                {/* Bengali Quote */}
-                <p className="text-cream-field/90 font-body text-lg mb-4 leading-relaxed">
-                  {testimonial.quote}
-                </p>
+                  {/* Bengali Quote */}
+                  <p className="text-cream-field/90 font-body text-lg mb-3 leading-relaxed line-clamp-3">
+                    {testimonial.quote}
+                  </p>
 
-                {/* English Translation */}
-                <p className="text-cream-field/50 font-body text-sm italic mb-6">
-                  {testimonial.quoteEn}
-                </p>
+                  {/* English Translation */}
+                  <p className="text-cream-field/50 font-body text-sm italic mb-6">
+                    {testimonial.quoteEn}
+                  </p>
 
-                {/* Yield Badge */}
-                <div className="inline-block px-4 py-2 bg-harvest-gold/20 rounded-full mb-6">
-                  <span className="text-harvest-gold font-body font-bold text-sm">
-                    Yield: {testimonial.yield}
-                  </span>
-                </div>
-
-                {/* Farmer Info */}
-                <div className="flex items-center gap-4">
-                  <div className="w-14 h-14 rounded-full overflow-hidden border-2 border-harvest-gold">
-                    <Image
-                      src={testimonial.image}
-                      alt={testimonial.nameEn}
-                      width={56}
-                      height={56}
-                      className="object-cover w-full h-full"
-                    />
-                  </div>
-                  <div>
-                    <div className="text-cream-field font-display font-semibold">
-                      {testimonial.name}
+                  {/* Farmer Info */}
+                  <div className="flex items-center gap-4">
+                    <div className="w-14 h-14 rounded-full overflow-hidden border-2 border-harvest-gold flex-shrink-0">
+                      <Image
+                        src={testimonial.image}
+                        alt={testimonial.nameEn}
+                        width={56}
+                        height={56}
+                        className="object-cover w-full h-full"
+                      />
                     </div>
-                    <div className="text-cream-field/50 font-body text-sm">
-                      {testimonial.nameEn}
+                    <div className="flex-1 min-w-0">
+                      <div className="text-cream-field font-display font-semibold text-base truncate">
+                        {testimonial.name}
+                      </div>
+                      <div className="text-cream-field/60 font-body text-sm truncate">
+                        {testimonial.nameEn}
+                      </div>
+                      <div className="text-harvest-gold/80 font-body text-xs mt-0.5 truncate">
+                        {testimonial.location}
+                      </div>
                     </div>
-                    <div className="text-harvest-gold/80 font-body text-xs mt-1">
-                      {testimonial.location}
+                    <div className="px-3 py-1.5 bg-harvest-gold/20 rounded-full flex-shrink-0">
+                      <span className="text-harvest-gold font-body font-bold text-xs">
+                        {testimonial.yield}
+                      </span>
                     </div>
                   </div>
                 </div>
               </motion.div>
             ))}
           </div>
+
+          {/* Right Arrow - Fixed position, no scale animation */}
+          <button
+            onClick={() => scroll('right')}
+            className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-2 md:translate-x-6 z-10 w-12 h-12 rounded-full bg-harvest-gold/30 hover:bg-harvest-gold flex items-center justify-center transition-colors duration-300 backdrop-blur-sm border border-harvest-gold/30 hover:border-harvest-gold"
+            aria-label="Scroll right"
+          >
+            <svg className="w-6 h-6 text-cream-field" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
         </div>
 
         {/* Scroll Hint */}
-        <div className="text-center mt-4">
-          <span className="text-cream-field/40 font-body text-sm">
-            ← Scroll to see more testimonials →
-          </span>
+        <div className="flex justify-center mt-6 gap-1">
+          <div className="w-8 h-1 rounded-full bg-harvest-gold/40" />
+          <div className="w-2 h-1 rounded-full bg-cream-field/20" />
+          <div className="w-2 h-1 rounded-full bg-cream-field/20" />
         </div>
       </div>
     </section>
@@ -921,24 +1047,36 @@ function CatalogueCTA() {
             <motion.div
               animate={{ y: [0, -10, 0] }}
               transition={{ duration: 4, repeat: Infinity }}
-              className="relative aspect-[3/4] max-w-sm mx-auto"
+              className="relative max-w-sm mx-auto"
             >
-              <div className="absolute inset-0 bg-gradient-to-br from-harvest-gold/30 to-sunset-orange/30 rounded-2xl transform rotate-3" />
-              <div className="absolute inset-0 bg-cream-field rounded-2xl shadow-2xl overflow-hidden">
-                <div className="absolute top-0 left-0 right-0 h-24 bg-deep-green flex items-center justify-center">
-                  <span className="text-harvest-gold font-display font-bold text-2xl">E-Catalogue</span>
+              {/* Stacked Catalogue Pages */}
+              <div className="relative">
+                {/* Back page */}
+                <div className="absolute top-4 left-4 w-full aspect-[3/4] rounded-2xl overflow-hidden shadow-xl transform rotate-6 bg-white">
+                  <Image
+                    src="/images/catalogue/page3.png"
+                    alt="Catalogue page 3"
+                    fill
+                    className="object-cover"
+                  />
                 </div>
-                <div className="p-6 pt-28">
-                  <div className="space-y-3">
-                    {[1, 2, 3, 4, 5].map((i) => (
-                      <div key={i} className="h-3 bg-rich-soil/10 rounded" style={{ width: `${100 - i * 10}%` }} />
-                    ))}
-                  </div>
-                  <div className="mt-6 grid grid-cols-2 gap-3">
-                    {[1, 2, 3, 4].map((i) => (
-                      <div key={i} className="aspect-square bg-harvest-gold/20 rounded-lg" />
-                    ))}
-                  </div>
+                {/* Middle page */}
+                <div className="absolute top-2 left-2 w-full aspect-[3/4] rounded-2xl overflow-hidden shadow-xl transform rotate-3 bg-white">
+                  <Image
+                    src="/images/catalogue/page2.png"
+                    alt="Catalogue page 2"
+                    fill
+                    className="object-cover"
+                  />
+                </div>
+                {/* Front page */}
+                <div className="relative w-full aspect-[3/4] rounded-2xl overflow-hidden shadow-2xl bg-white">
+                  <Image
+                    src="/images/catalogue/page1.png"
+                    alt="Sashyashree E-Catalogue Cover"
+                    fill
+                    className="object-cover"
+                  />
                 </div>
               </div>
             </motion.div>
@@ -977,32 +1115,49 @@ function Footer() {
           {/* Brand Column */}
           <div className="lg:col-span-1">
             <div className="flex items-center gap-3 mb-6">
-              <div className="w-14 h-14 rounded-full bg-harvest-gold flex items-center justify-center">
-                <span className="text-rich-soil font-display font-bold text-2xl">S</span>
+              <div className="relative w-16 h-16 rounded-full overflow-hidden bg-white shadow-md border-2 border-harvest-gold/30">
+                <Image
+                  src="/images/logo.png"
+                  alt="Sashyashree Logo"
+                  fill
+                  className="object-contain p-1"
+                />
               </div>
               <div>
                 <h3 className="font-display font-bold text-xl text-cream-field">Sashyashree</h3>
                 <p className="text-cream-field/50 text-xs font-body">Since 1992</p>
               </div>
             </div>
-            <p className="text-cream-field/60 font-body text-sm mb-6">
+            <p className="text-cream-field/60 font-body text-base mb-6">
               Eastern India&apos;s leading agricultural seeds producer,
               serving farmers with premium quality seeds for over 32 years.
             </p>
             {/* Social Links */}
             <div className="flex gap-3">
-              {['facebook', 'twitter', 'instagram', 'youtube'].map((social) => (
-                <a
-                  key={social}
-                  href="#"
-                  className="w-10 h-10 rounded-full bg-cream-field/10 flex items-center justify-center text-cream-field/60 hover:bg-harvest-gold hover:text-rich-soil transition-colors"
-                >
-                  <span className="sr-only">{social}</span>
-                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M12 2C6.477 2 2 6.477 2 12c0 5.523 4.477 10 10 10s10-4.477 10-10c0-5.523-4.477-10-10-10z" />
-                  </svg>
-                </a>
-              ))}
+              <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="w-11 h-11 rounded-full bg-cream-field/10 flex items-center justify-center text-cream-field/60 hover:bg-harvest-gold hover:text-rich-soil transition-colors">
+                <span className="sr-only">Facebook</span>
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                </svg>
+              </a>
+              <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="w-11 h-11 rounded-full bg-cream-field/10 flex items-center justify-center text-cream-field/60 hover:bg-harvest-gold hover:text-rich-soil transition-colors">
+                <span className="sr-only">Twitter</span>
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                </svg>
+              </a>
+              <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="w-11 h-11 rounded-full bg-cream-field/10 flex items-center justify-center text-cream-field/60 hover:bg-harvest-gold hover:text-rich-soil transition-colors">
+                <span className="sr-only">Instagram</span>
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                </svg>
+              </a>
+              <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" className="w-11 h-11 rounded-full bg-cream-field/10 flex items-center justify-center text-cream-field/60 hover:bg-harvest-gold hover:text-rich-soil transition-colors">
+                <span className="sr-only">YouTube</span>
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                </svg>
+              </a>
             </div>
           </div>
 
@@ -1016,7 +1171,7 @@ function Footer() {
                 <li key={link.name}>
                   <a
                     href={link.href}
-                    className="text-cream-field/70 font-body text-sm hover:text-harvest-gold transition-colors inline-flex items-center gap-2 group"
+                    className="text-cream-field/70 font-body text-base hover:text-harvest-gold transition-colors inline-flex items-center gap-2 group"
                   >
                     <span className="w-1.5 h-1.5 bg-harvest-gold/50 rounded-full group-hover:bg-harvest-gold transition-colors" />
                     {link.name}
@@ -1036,7 +1191,7 @@ function Footer() {
                 <li key={link.name}>
                   <a
                     href={link.href}
-                    className="text-cream-field/70 font-body text-sm hover:text-harvest-gold transition-colors inline-flex items-center gap-2 group"
+                    className="text-cream-field/70 font-body text-base hover:text-harvest-gold transition-colors inline-flex items-center gap-2 group"
                   >
                     <span className="w-1.5 h-1.5 bg-harvest-gold/50 rounded-full group-hover:bg-harvest-gold transition-colors" />
                     {link.name}
@@ -1060,7 +1215,7 @@ function Footer() {
                   </svg>
                 </div>
                 <div>
-                  <p className="text-cream-field/80 font-body text-sm">
+                  <p className="text-cream-field/80 font-body text-base">
                     Kashtadahi, Arambag,<br />
                     West Bengal 712413
                   </p>
@@ -1072,7 +1227,7 @@ function Footer() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                   </svg>
                 </div>
-                <a href="tel:+918001926461" className="text-cream-field/80 font-body text-sm hover:text-harvest-gold transition-colors">
+                <a href="tel:+918001926461" className="text-cream-field/80 font-body text-base hover:text-harvest-gold transition-colors">
                   +91 8001926461
                 </a>
               </div>
@@ -1082,7 +1237,7 @@ function Footer() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                   </svg>
                 </div>
-                <a href="mailto:info.sashyashree@gmail.com" className="text-cream-field/80 font-body text-sm hover:text-harvest-gold transition-colors">
+                <a href="mailto:info.sashyashree@gmail.com" className="text-cream-field/80 font-body text-base hover:text-harvest-gold transition-colors">
                   info.sashyashree@gmail.com
                 </a>
               </div>
@@ -1093,14 +1248,14 @@ function Footer() {
         {/* Bottom Bar */}
         <div className="pt-8 border-t border-cream-field/10">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-            <p className="text-cream-field/50 font-body text-sm text-center md:text-left">
+            <p className="text-cream-field/50 font-body text-base text-center md:text-left">
               &copy; {new Date().getFullYear()} Sashyashree Agri Processing Pvt. Ltd. All rights reserved.
             </p>
             <div className="flex gap-6">
-              <a href="#" className="text-cream-field/50 font-body text-sm hover:text-harvest-gold transition-colors">
+              <a href="#" className="text-cream-field/50 font-body text-base hover:text-harvest-gold transition-colors">
                 Privacy Policy
               </a>
-              <a href="#" className="text-cream-field/50 font-body text-sm hover:text-harvest-gold transition-colors">
+              <a href="#" className="text-cream-field/50 font-body text-base hover:text-harvest-gold transition-colors">
                 Terms of Service
               </a>
             </div>
