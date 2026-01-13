@@ -1,340 +1,708 @@
 'use client'
 
-import { motion, useScroll, useTransform, useInView } from 'framer-motion'
-import { useRef, useState, useEffect } from 'react'
+import { motion, useInView } from 'framer-motion'
 import Image from 'next/image'
+import { useRef, useState, useEffect } from 'react'
 
-// ============================================
-// NAVIGATION
-// ============================================
+// Floating Seeds Animation - Using Framer Motion
+function FloatingSeeds() {
+  const [seeds, setSeeds] = useState<Array<{
+    id: number
+    x: number
+    y: number
+    size: number
+    duration: number
+    delay: number
+    type: 'seed' | 'leaf' | 'dot'
+  }>>([])
+
+  useEffect(() => {
+    // Generate seeds only on client side to avoid hydration mismatch
+    const generatedSeeds = Array.from({ length: 12 }, (_, i) => ({
+      id: i,
+      x: Math.random() * 100,
+      y: Math.random() * 100,
+      size: 8 + Math.random() * 16,
+      duration: 15 + Math.random() * 10,
+      delay: Math.random() * 5,
+      type: (['seed', 'leaf', 'dot'] as const)[Math.floor(Math.random() * 3)],
+    }))
+    setSeeds(generatedSeeds)
+  }, [])
+
+  if (seeds.length === 0) return null
+
+  return (
+    <div className="absolute inset-0 overflow-hidden pointer-events-none">
+      {seeds.map((seed) => (
+        <motion.div
+          key={seed.id}
+          className="absolute"
+          style={{
+            left: `${seed.x}%`,
+            top: `${seed.y}%`,
+          }}
+          animate={{
+            y: [0, -30, 0],
+            x: [0, 15, -15, 0],
+            rotate: [0, 10, -10, 0],
+            scale: [1, 1.1, 1],
+          }}
+          transition={{
+            duration: seed.duration,
+            delay: seed.delay,
+            repeat: Infinity,
+            ease: 'easeInOut',
+          }}
+        >
+          {seed.type === 'seed' && (
+            <svg width={seed.size} height={seed.size * 0.7} viewBox="0 0 24 16">
+              <ellipse cx="12" cy="8" rx="10" ry="6" fill="#C67B5C" opacity="0.6" />
+            </svg>
+          )}
+          {seed.type === 'leaf' && (
+            <svg width={seed.size} height={seed.size} viewBox="0 0 24 24">
+              <path d="M12 2C8 6 6 12 8 18c2-2 6-4 8-2-2-4-2-10-4-14z" fill="#87A878" opacity="0.5" />
+            </svg>
+          )}
+          {seed.type === 'dot' && (
+            <div
+              className="rounded-full bg-sage-green"
+              style={{
+                width: seed.size / 2,
+                height: seed.size / 2,
+                opacity: 0.3,
+              }}
+            />
+          )}
+        </motion.div>
+      ))}
+    </div>
+  )
+}
+
+// Breathing Organic Blobs
+function BreathingBlobs() {
+  return (
+    <>
+      {/* Large sage blob - top left */}
+      <motion.div
+        className="absolute -top-20 -left-32 w-96 h-96 rounded-full bg-sage-green/20 blur-3xl"
+        animate={{
+          scale: [1, 1.2, 1],
+          opacity: [0.2, 0.3, 0.2],
+        }}
+        transition={{
+          duration: 8,
+          repeat: Infinity,
+          ease: 'easeInOut',
+        }}
+      />
+
+      {/* Terracotta blob - bottom right */}
+      <motion.div
+        className="absolute -bottom-20 -right-20 w-72 h-72 rounded-full bg-terracotta/15 blur-3xl"
+        animate={{
+          scale: [1, 1.15, 1],
+          opacity: [0.15, 0.25, 0.15],
+        }}
+        transition={{
+          duration: 10,
+          delay: 2,
+          repeat: Infinity,
+          ease: 'easeInOut',
+        }}
+      />
+
+      {/* Small forest blob - center right */}
+      <motion.div
+        className="absolute top-1/3 right-1/4 w-48 h-48 rounded-full bg-forest-deep/10 blur-2xl"
+        animate={{
+          scale: [1, 1.3, 1],
+          x: [0, 20, 0],
+          y: [0, -20, 0],
+        }}
+        transition={{
+          duration: 12,
+          delay: 1,
+          repeat: Infinity,
+          ease: 'easeInOut',
+        }}
+      />
+    </>
+  )
+}
+
+// Animated Plant Illustration
+function GrowingPlant() {
+  return (
+    <div className="relative w-48 h-64 md:w-64 md:h-80">
+      <svg viewBox="0 0 200 260" className="w-full h-full">
+        {/* Ground */}
+        <motion.ellipse
+          cx="100"
+          cy="240"
+          rx="60"
+          ry="12"
+          fill="#5D4037"
+          opacity="0.2"
+          initial={{ scale: 0 }}
+          animate={{ scale: 1 }}
+          transition={{ duration: 0.5 }}
+        />
+
+        {/* Main stem */}
+        <motion.path
+          d="M100 240 Q100 180 100 100"
+          stroke="#87A878"
+          strokeWidth="6"
+          fill="none"
+          strokeLinecap="round"
+          initial={{ pathLength: 0 }}
+          animate={{ pathLength: 1 }}
+          transition={{ duration: 1.5, ease: 'easeOut' }}
+        />
+
+        {/* Left branch */}
+        <motion.path
+          d="M100 160 Q70 150 50 120"
+          stroke="#87A878"
+          strokeWidth="4"
+          fill="none"
+          strokeLinecap="round"
+          initial={{ pathLength: 0 }}
+          animate={{ pathLength: 1 }}
+          transition={{ duration: 1, delay: 0.8, ease: 'easeOut' }}
+        />
+
+        {/* Right branch */}
+        <motion.path
+          d="M100 140 Q130 130 155 105"
+          stroke="#87A878"
+          strokeWidth="4"
+          fill="none"
+          strokeLinecap="round"
+          initial={{ pathLength: 0 }}
+          animate={{ pathLength: 1 }}
+          transition={{ duration: 1, delay: 1, ease: 'easeOut' }}
+        />
+
+        {/* Left leaf 1 */}
+        <motion.path
+          d="M50 120 Q30 100 40 70 Q60 90 50 120"
+          fill="#87A878"
+          initial={{ scale: 0, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ duration: 0.6, delay: 1.5 }}
+        />
+
+        {/* Left leaf 2 */}
+        <motion.path
+          d="M70 150 Q45 140 35 110 Q60 125 70 150"
+          fill="#2D4A3E"
+          initial={{ scale: 0, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ duration: 0.6, delay: 1.7 }}
+        />
+
+        {/* Right leaf 1 */}
+        <motion.path
+          d="M155 105 Q175 85 165 55 Q145 75 155 105"
+          fill="#87A878"
+          initial={{ scale: 0, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ duration: 0.6, delay: 1.6 }}
+        />
+
+        {/* Right leaf 2 */}
+        <motion.path
+          d="M130 130 Q155 115 150 85 Q125 105 130 130"
+          fill="#2D4A3E"
+          initial={{ scale: 0, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ duration: 0.6, delay: 1.8 }}
+        />
+
+        {/* Top leaves */}
+        <motion.path
+          d="M100 100 Q75 80 70 50 Q95 70 100 100"
+          fill="#2D4A3E"
+          initial={{ scale: 0, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ duration: 0.6, delay: 2 }}
+        />
+        <motion.path
+          d="M100 100 Q125 80 130 50 Q105 70 100 100"
+          fill="#2D4A3E"
+          initial={{ scale: 0, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ duration: 0.6, delay: 2.1 }}
+        />
+
+        {/* Seed at base */}
+        <motion.ellipse
+          cx="100"
+          cy="235"
+          rx="15"
+          ry="10"
+          fill="#C67B5C"
+          initial={{ scale: 0 }}
+          animate={{ scale: [0, 1.2, 1] }}
+          transition={{ duration: 0.8 }}
+        />
+      </svg>
+
+      {/* Gentle glow behind plant */}
+      <motion.div
+        className="absolute inset-0 -z-10 bg-sage-green/10 rounded-full blur-3xl"
+        animate={{
+          scale: [1, 1.1, 1],
+          opacity: [0.3, 0.5, 0.3],
+        }}
+        transition={{
+          duration: 4,
+          repeat: Infinity,
+          ease: 'easeInOut',
+        }}
+      />
+    </div>
+  )
+}
+
+// Navigation
 function Navigation() {
   const [scrolled, setScrolled] = useState(false)
 
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 100)
+    const handleScroll = () => setScrolled(window.scrollY > 50)
     window.addEventListener('scroll', handleScroll)
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
   return (
     <motion.nav
-      initial={{ y: -100 }}
-      animate={{ y: 0 }}
+      initial={{ y: -100, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ duration: 0.6, ease: 'easeOut' }}
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-        scrolled ? 'bg-paper-white/95 backdrop-blur-sm shadow-sm' : 'bg-transparent'
+        scrolled ? 'bg-soft-white/95 backdrop-blur-md shadow-sm' : 'bg-transparent'
       }`}
     >
-      <div className="max-w-6xl mx-auto px-6 py-5 flex items-center justify-between">
-        <a href="#" className="flex items-center gap-3">
-          <span className="text-bengal-terracotta font-display font-black text-2xl">শস্যশ্রী</span>
-          <span className="hidden md:block text-xs text-ink-black/50 font-body border-l border-ink-black/20 pl-3">
-            Est. 1992
-          </span>
-        </a>
+      <div className="max-w-6xl mx-auto px-6 py-4">
+        <div className="flex items-center justify-between">
+          {/* Logo */}
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 rounded-full bg-sage-green flex items-center justify-center shadow-md">
+              <svg className="w-6 h-6 text-soft-white" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2C8 6 4 10 4 14c0 4.4 3.6 8 8 8s8-3.6 8-8c0-4-4-8-8-12zm0 18c-3.3 0-6-2.7-6-6 0-2.5 2-5 6-9 4 4 6 6.5 6 9 0 3.3-2.7 6-6 6z"/>
+                <circle cx="12" cy="14" r="3" />
+              </svg>
+            </div>
+            <div>
+              <span className="font-display text-xl text-forest-deep">Sashyashree Agri</span>
+              <span className="block text-xs font-body text-sage-green">Since 1992</span>
+            </div>
+          </div>
 
-        <div className="hidden md:flex items-center gap-8">
-          {['Story', 'Products', 'Farmers', 'Contact'].map((item) => (
-            <a
-              key={item}
-              href={`#${item.toLowerCase()}`}
-              className="font-body text-sm text-ink-black/70 hover:text-bengal-terracotta transition-colors"
-            >
-              {item}
-            </a>
-          ))}
+          {/* Nav Links */}
+          <div className="hidden md:flex items-center gap-8">
+            {['Story', 'Seeds', 'Farmers', 'Contact'].map((item) => (
+              <a
+                key={item}
+                href={`#${item.toLowerCase()}`}
+                className="font-body text-sm text-rich-earth hover:text-sage-green transition-colors relative group"
+              >
+                {item}
+                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-sage-green rounded-full transition-all group-hover:w-full" />
+              </a>
+            ))}
+          </div>
+
+          {/* CTA */}
+          <a
+            href="#contact"
+            className="btn-organic btn-organic-primary text-sm hidden sm:inline-flex"
+          >
+            Get in Touch
+          </a>
         </div>
-
-        <a
-          href="tel:+918001926461"
-          className="px-5 py-2.5 bg-bengal-terracotta text-paper-white font-body font-medium text-sm rounded hover:bg-bengal-terracotta/90 transition-colors"
-        >
-          Contact
-        </a>
       </div>
     </motion.nav>
   )
 }
 
-// ============================================
-// HERO SECTION - Editorial Style
-// ============================================
+// Hero Section
 function HeroSection() {
-  const ref = useRef(null)
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ['start start', 'end start'],
-  })
-  const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0])
-  const scale = useTransform(scrollYProgress, [0, 0.5], [1, 1.1])
+  // Staggered text animation variants
+  const headlineWords = ['Growing', 'Together,']
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.15,
+        delayChildren: 0.3,
+      },
+    },
+  }
+
+  const wordVariants = {
+    hidden: { opacity: 0, y: 30 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.6,
+        ease: [0.25, 0.46, 0.45, 0.94],
+      },
+    },
+  }
 
   return (
-    <section ref={ref} className="relative min-h-screen overflow-hidden">
-      {/* Ken Burns Background Image */}
-      <motion.div style={{ scale }} className="absolute inset-0">
+    <section className="relative min-h-screen flex items-center overflow-hidden">
+      {/* Rich Organic Background */}
+      <div className="absolute inset-0">
         <Image
-          src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=1920&q=80"
-          alt="Bengal rice fields"
+          src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=2532"
+          alt="Lush green field at sunrise"
           fill
-          className="object-cover ken-burns"
+          className="object-cover"
           priority
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-ink-black/60 via-ink-black/30 to-paper-white" />
-      </motion.div>
+        {/* Multi-layered organic gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-br from-forest-deep/70 via-sage-green/40 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-r from-warm-cream/85 via-warm-cream/50 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-rich-earth/20 via-transparent to-sage-green/10" />
+      </div>
 
-      {/* Halftone Overlay */}
-      <div className="absolute inset-0 halftone-overlay" />
+      {/* Animated Breathing Blobs */}
+      <BreathingBlobs />
+
+      {/* Floating Seeds */}
+      <FloatingSeeds />
 
       {/* Content */}
-      <motion.div style={{ opacity }} className="relative z-10 min-h-screen flex flex-col justify-end pb-20 md:pb-32">
-        <div className="max-w-6xl mx-auto px-6 w-full">
-          {/* Issue Number Style */}
-          <motion.div
-            initial={{ opacity: 0, x: -30 }}
+      <div className="relative z-10 max-w-6xl mx-auto px-6 py-32 grid lg:grid-cols-2 gap-12 items-center">
+        <div>
+          {/* Handwritten tagline */}
+          <motion.span
+            className="handwritten text-2xl mb-4 block text-terracotta"
+            initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.5 }}
-            className="mb-6"
+            transition={{ duration: 0.6 }}
           >
-            <span className="inline-block px-4 py-2 bg-bengal-terracotta text-paper-white font-body text-xs tracking-widest uppercase">
-              Est. 1992 — Arambag, West Bengal
-            </span>
-          </motion.div>
+            From Seed to Success
+          </motion.span>
 
-          {/* Main Headline */}
+          {/* Animated Headline */}
           <motion.h1
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.7 }}
-            className="text-paper-white mb-6"
+            className="mb-6"
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
           >
-            <span className="block text-5xl md:text-7xl lg:text-8xl font-display font-black leading-none">
-              From Seed
-            </span>
-            <span className="block text-5xl md:text-7xl lg:text-8xl font-display font-black leading-none text-bengal-terracotta">
-              to Harvest
-            </span>
+            {headlineWords.map((word, i) => (
+              <motion.span key={i} variants={wordVariants} className="inline-block mr-4">
+                {word}
+              </motion.span>
+            ))}
+            <motion.span
+              variants={wordVariants}
+              className="inline-block text-sage-green"
+            >
+              Naturally
+            </motion.span>
           </motion.h1>
 
-          {/* Subheadline */}
+          {/* Description */}
           <motion.p
-            initial={{ opacity: 0, y: 30 }}
+            className="text-lg mb-8 max-w-lg opacity-90"
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.9 }}
-            className="text-paper-white/80 font-body text-xl md:text-2xl max-w-xl italic"
+            transition={{ duration: 0.6, delay: 0.8 }}
           >
-            Three decades of nurturing Bengal&apos;s agricultural heritage,
-            one seed at a time.
+            For over three decades, we&apos;ve been nurturing the dreams of Eastern Indian
+            farmers with premium quality seeds, rooted in trust and cultivated with care.
           </motion.p>
 
-          {/* Scroll Indicator */}
+          {/* CTA Buttons */}
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 1.5 }}
-            className="mt-12"
+            className="flex flex-wrap gap-4"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 1 }}
           >
-            <motion.div
-              animate={{ y: [0, 10, 0] }}
-              transition={{ duration: 2, repeat: Infinity }}
-              className="flex items-center gap-3 text-paper-white/60"
+            <motion.a
+              href="#seeds"
+              className="btn-organic btn-organic-primary"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.98 }}
             >
-              <span className="w-8 h-[1px] bg-paper-white/60" />
-              <span className="font-body text-xs tracking-widest uppercase">Scroll to explore</span>
-            </motion.div>
+              Explore Our Seeds
+            </motion.a>
+            <motion.a
+              href="#story"
+              className="btn-organic btn-organic-secondary"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              Our Story
+            </motion.a>
           </motion.div>
         </div>
+
+        {/* Growing Plant Animation */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.8, delay: 0.5 }}
+          className="hidden lg:flex justify-center items-center"
+        >
+          <GrowingPlant />
+        </motion.div>
+      </div>
+
+      {/* Scroll Indicator */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 2.5 }}
+        className="absolute bottom-8 left-1/2 -translate-x-1/2"
+      >
+        <motion.div
+          animate={{ y: [0, 10, 0] }}
+          transition={{ repeat: Infinity, duration: 2, ease: 'easeInOut' }}
+          className="w-6 h-10 border-2 border-sage-green rounded-full flex justify-center pt-2"
+        >
+          <motion.div
+            animate={{ opacity: [0.5, 1, 0.5] }}
+            transition={{ repeat: Infinity, duration: 2, ease: 'easeInOut' }}
+            className="w-1.5 h-3 bg-sage-green rounded-full"
+          />
+        </motion.div>
       </motion.div>
     </section>
   )
 }
 
-// ============================================
-// TIMELINE SECTION - Horizontal Scroll
-// ============================================
-function TimelineSection() {
-  const ref = useRef(null)
-  const isInView = useInView(ref, { once: true, margin: '-100px' })
-
-  const milestones = [
-    { year: '1992', title: 'The Beginning', desc: 'Started as Santosh Seed Centre with mustard seeds', image: 'https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?w=600&q=80' },
-    { year: '2000', title: 'Expansion', desc: 'Added paddy seeds to serve Bengal farmers', image: 'https://images.unsplash.com/photo-1536304993881-ff6e9eefa2a6?w=600&q=80' },
-    { year: '2010', title: 'Growth', desc: 'Extended to Bihar, Jharkhand, Orissa & Assam', image: 'https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=600&q=80' },
-    { year: '2018', title: 'New Era', desc: 'Became Sashyashree Agri Processing Pvt. Ltd.', image: 'https://images.unsplash.com/photo-1589923188651-268a9765e432?w=600&q=80' },
-    { year: 'Today', title: 'Leading', desc: 'Eastern India\'s trusted seed producer', image: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=600&q=80' },
+// Philosophy Strip
+function PhilosophyStrip() {
+  const philosophyItems = [
+    { icon: '🌱', title: 'Quality Seeds', desc: 'Carefully selected genetics' },
+    { icon: '🌍', title: 'Healthy Soil', desc: 'Nurturing the earth' },
+    { icon: '☀️', title: 'Natural Growth', desc: 'Sustainable practices' },
   ]
 
   return (
-    <section id="story" ref={ref} className="py-24 md:py-32 bg-jute-beige/30 paper-texture">
-      <div className="max-w-6xl mx-auto px-6 mb-12">
-        <div className="grid md:grid-cols-12 gap-8 items-end">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={isInView ? { opacity: 1, y: 0 } : {}}
-            className="md:col-span-8"
-          >
-            <span className="section-number">01</span>
-            <h2 className="text-ink-black -mt-8">
-              Our <span className="text-bengal-terracotta">Journey</span>
-            </h2>
-          </motion.div>
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ delay: 0.2 }}
-            className="md:col-span-4"
-          >
-            <p className="text-ink-black/60 font-body text-sm">
-              From a small seed centre in Arambag to Eastern India&apos;s leading agricultural partner.
-            </p>
-          </motion.div>
-        </div>
-      </div>
+    <section className="py-20 bg-forest-deep relative overflow-hidden">
+      {/* Organic shape overlay */}
+      <div className="absolute top-0 left-0 w-full h-4 bg-warm-cream" style={{
+        borderRadius: '0 0 50% 50%',
+      }} />
 
-      {/* Horizontal Timeline */}
-      <div className="timeline-scroll pb-6">
-        <div className="flex gap-8 px-6 min-w-max">
-          {milestones.map((milestone, index) => (
+      <div className="max-w-6xl mx-auto px-6">
+        <motion.p
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="handwritten text-3xl text-center text-warm-cream mb-12"
+        >
+          &quot;Rooted in Nature, Growing with Farmers&quot;
+        </motion.p>
+
+        <div className="grid md:grid-cols-3 gap-8">
+          {philosophyItems.map((item, index) => (
             <motion.div
-              key={milestone.year}
-              initial={{ opacity: 0, x: 50 }}
-              animate={isInView ? { opacity: 1, x: 0 } : {}}
+              key={item.title}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
               transition={{ delay: index * 0.15 }}
-              className="w-[350px] flex-shrink-0"
+              className="text-center"
             >
-              {/* Year Badge */}
-              <div className="flex items-center gap-4 mb-4">
-                <span className="text-4xl font-display font-black text-bengal-terracotta">
-                  {milestone.year}
-                </span>
-                <span className="flex-1 h-[2px] bg-bengal-terracotta/30" />
-              </div>
-
-              {/* Image */}
-              <div className="relative aspect-[4/3] mb-4 overflow-hidden">
-                <Image
-                  src={milestone.image}
-                  alt={milestone.title}
-                  fill
-                  className="object-cover sepia-tone"
-                />
-                <div className="absolute inset-0 bg-bengal-terracotta/10" />
-              </div>
-
-              {/* Content */}
-              <h3 className="text-ink-black text-xl font-display font-bold mb-2">
-                {milestone.title}
-              </h3>
-              <p className="text-ink-black/60 font-body text-sm">
-                {milestone.desc}
-              </p>
+              <span className="text-5xl mb-4 block">{item.icon}</span>
+              <h3 className="text-soft-white mb-2 font-display text-xl">{item.title}</h3>
+              <p className="text-warm-cream/70 font-body text-sm">{item.desc}</p>
             </motion.div>
           ))}
         </div>
       </div>
 
-      <div className="max-w-6xl mx-auto px-6 mt-8">
-        <span className="text-ink-black/40 font-body text-sm">
-          ← Drag to explore our journey →
-        </span>
+      {/* Bottom organic shape */}
+      <div className="absolute bottom-0 left-0 w-full h-4 bg-warm-cream" style={{
+        borderRadius: '50% 50% 0 0',
+      }} />
+    </section>
+  )
+}
+
+// Our Story Section
+function StorySection() {
+  const ref = useRef(null)
+  const isInView = useInView(ref, { once: true, margin: '-100px' })
+
+  return (
+    <section id="story" className="py-28 watercolor-wash relative">
+      <div className="max-w-6xl mx-auto px-6">
+        <div className="grid lg:grid-cols-2 gap-16 items-center" ref={ref}>
+          {/* Image */}
+          <motion.div
+            initial={{ opacity: 0, x: -50 }}
+            animate={isInView ? { opacity: 1, x: 0 } : {}}
+            transition={{ duration: 0.8 }}
+            className="relative"
+          >
+            <div className="absolute -inset-4 bg-sage-green/20 rounded-3xl transform -rotate-3" />
+            <div className="relative rounded-3xl overflow-hidden shadow-xl">
+              <Image
+                src="https://images.unsplash.com/photo-1605000797499-95a51c5269ae?q=80&w=800"
+                alt="Farmer in field"
+                width={600}
+                height={450}
+                className="w-full object-cover"
+              />
+            </div>
+            {/* Badge */}
+            <div className="absolute -bottom-6 -right-6 bg-soft-white rounded-2xl p-4 shadow-lg">
+              <span className="font-display text-3xl text-sage-green">32+</span>
+              <span className="block text-sm text-rich-earth font-body">Years of Trust</span>
+            </div>
+          </motion.div>
+
+          {/* Content */}
+          <motion.div
+            initial={{ opacity: 0, x: 50 }}
+            animate={isInView ? { opacity: 1, x: 0 } : {}}
+            transition={{ duration: 0.8, delay: 0.2 }}
+          >
+            <span className="handwritten text-xl text-terracotta mb-2 block">Our Journey</span>
+            <h2 className="mb-6">A Legacy of Growth</h2>
+
+            <p className="mb-6">
+              In 1992, Mr. Jagannath Das started Santosh Seed Centre in the heart of
+              West Bengal with a simple belief: good seeds are the foundation of farmer prosperity.
+            </p>
+
+            <p className="mb-6">
+              What began as a small mustard seed business has blossomed into Sashyashree Agri,
+              serving farmers across five Eastern Indian states with premium quality seeds for
+              paddy, oil crops, jute, fodder, maize, and vegetables.
+            </p>
+
+            <blockquote className="border-l-4 border-sage-green pl-6 my-8">
+              <p className="handwritten text-2xl text-forest-deep italic">
+                &quot;Good Seeds Only Can Make High Yield&quot;
+              </p>
+              <cite className="font-body text-sm text-rich-earth/70 mt-2 block">
+                — Mr. Jagannath Das, Founder
+              </cite>
+            </blockquote>
+
+            <div className="flex gap-8">
+              <div>
+                <span className="font-display text-2xl text-sage-green">5</span>
+                <span className="block text-sm text-rich-earth/70">States Served</span>
+              </div>
+              <div>
+                <span className="font-display text-2xl text-sage-green">15+</span>
+                <span className="block text-sm text-rich-earth/70">Seed Varieties</span>
+              </div>
+              <div>
+                <span className="font-display text-2xl text-sage-green">1000s</span>
+                <span className="block text-sm text-rich-earth/70">Happy Farmers</span>
+              </div>
+            </div>
+          </motion.div>
+        </div>
       </div>
     </section>
   )
 }
 
-// ============================================
-// PRODUCTS SECTION - Magazine Feature Style
-// ============================================
-function ProductsSection() {
-  const ref = useRef(null)
-  const isInView = useInView(ref, { once: true, margin: '-100px' })
-
-  const products = [
-    { name: 'Paddy Seeds', bengali: 'ধানবীজ', varieties: ['Jamini', 'Badsha Bhog', 'Swarnamoti', 'Disha'], image: 'https://images.unsplash.com/photo-1536304993881-ff6e9eefa2a6?w=800&q=80' },
-    { name: 'Oil Seeds', bengali: 'তৈলবীজ', varieties: ['Sohini (Mustard)', 'Usha (Sesame)', 'Groundnut'], image: 'https://images.unsplash.com/photo-1615485290382-441e4d049cb5?w=800&q=80' },
-    { name: 'Jute Seeds', bengali: 'পাটবীজ', varieties: ['Premium Quality', 'High Fiber Yield'], image: 'https://images.unsplash.com/photo-1595841696677-6589f0e26c3e?w=800&q=80' },
+// Seed Categories Section
+function SeedCategories() {
+  const categories = [
+    {
+      name: 'Paddy Seeds',
+      varieties: 'Jamini, Badsha Bhog, Swarnamoti',
+      image: 'https://images.unsplash.com/photo-1536304993881-ff6e9eefa2a6?q=80&w=600',
+      color: 'bg-sage-green',
+    },
+    {
+      name: 'Oil Seeds',
+      varieties: 'Sohini Mustard, Usha Sesame',
+      image: 'https://images.unsplash.com/photo-1615485290382-441e4d049cb5?q=80&w=600',
+      color: 'bg-terracotta',
+    },
+    {
+      name: 'Jute Seeds',
+      varieties: 'Premium Quality Imports',
+      image: 'https://images.unsplash.com/photo-1530836369250-ef72a3f5cda8?q=80&w=600',
+      color: 'bg-rich-earth',
+    },
+    {
+      name: 'Fodder Seeds',
+      varieties: 'SSG-106 Sudan Grass, Hybrid Bajra',
+      image: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=600',
+      color: 'bg-forest-deep',
+    },
+    {
+      name: 'Maize Seeds',
+      varieties: 'SMS-4025, SMS-4055 Hybrids',
+      image: 'https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?q=80&w=600',
+      color: 'bg-sage-green',
+    },
+    {
+      name: 'Vegetable Seeds',
+      varieties: 'Leafy Vegetables & More',
+      image: 'https://images.unsplash.com/photo-1592921870789-04563d55041c?q=80&w=600',
+      color: 'bg-terracotta',
+    },
   ]
 
   return (
-    <section id="products" ref={ref} className="py-24 md:py-32 bg-paper-white editorial-grid">
+    <section id="seeds" className="py-28 bg-soft-white">
       <div className="max-w-6xl mx-auto px-6">
-        {/* Section Header */}
-        <div className="grid md:grid-cols-12 gap-8 mb-16">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={isInView ? { opacity: 1, y: 0 } : {}}
-            className="md:col-span-4"
-          >
-            <span className="section-number">02</span>
-            <h2 className="text-ink-black -mt-8">
-              Our <span className="text-paddy-green">Harvest</span>
-            </h2>
-          </motion.div>
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ delay: 0.2 }}
-            className="md:col-span-6 md:col-start-7"
-          >
-            <p className="text-ink-black/70 font-body text-lg leading-relaxed">
-              Each seed carries our promise of quality—carefully selected, rigorously tested,
-              and grown to bring prosperity to Bengal&apos;s farming families.
-            </p>
-          </motion.div>
-        </div>
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="text-center mb-16"
+        >
+          <span className="handwritten text-xl text-terracotta mb-2 block">What We Grow</span>
+          <h2>Our Seed Collection</h2>
+          <p className="mt-4 max-w-2xl mx-auto">
+            Each seed variety is carefully selected and tested to ensure the highest
+            germination rates and yields for Eastern Indian soil conditions.
+          </p>
+        </motion.div>
 
-        {/* Product Features */}
-        <div className="space-y-20">
-          {products.map((product, index) => (
-            <motion.article
-              key={product.name}
-              initial={{ opacity: 0, y: 50 }}
-              animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ delay: index * 0.2 }}
-              className={`grid md:grid-cols-12 gap-8 items-center ${
-                index % 2 === 1 ? 'md:flex-row-reverse' : ''
-              }`}
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {categories.map((category, index) => (
+            <motion.div
+              key={category.name}
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: index * 0.1 }}
+              className="soft-card overflow-hidden group cursor-pointer"
             >
-              {/* Image */}
-              <div className={`md:col-span-6 ${index % 2 === 1 ? 'md:col-start-7' : ''}`}>
-                <div className="relative aspect-[4/3] overflow-hidden decorative-border">
-                  <Image
-                    src={product.image}
-                    alt={product.name}
-                    fill
-                    className="object-cover"
-                  />
-                  <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-ink-black/80 to-transparent">
-                    <span className="text-paper-white font-bengali text-2xl">{product.bengali}</span>
-                  </div>
-                </div>
+              <div className="relative h-48 overflow-hidden">
+                <Image
+                  src={category.image}
+                  alt={category.name}
+                  fill
+                  className="object-cover transition-transform duration-500 group-hover:scale-110"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-forest-deep/60 to-transparent" />
+                <div className={`absolute top-4 right-4 w-3 h-3 rounded-full ${category.color}`} />
               </div>
-
-              {/* Content */}
-              <div className={`md:col-span-5 ${index % 2 === 1 ? 'md:col-start-1 md:row-start-1' : ''}`}>
-                <span className="text-bengal-terracotta font-body text-sm tracking-widest uppercase mb-2 block">
-                  Featured Product
-                </span>
-                <h3 className="text-ink-black text-3xl md:text-4xl font-display font-bold mb-4">
-                  {product.name}
-                </h3>
-                <div className="space-y-2 mb-6">
-                  {product.varieties.map((variety) => (
-                    <div key={variety} className="flex items-center gap-3">
-                      <span className="w-2 h-2 bg-bengal-terracotta rounded-full" />
-                      <span className="font-body text-ink-black/70">{variety}</span>
-                    </div>
-                  ))}
-                </div>
-                <a
-                  href="#"
-                  className="inline-flex items-center gap-2 text-bengal-terracotta font-body font-medium hover:underline"
-                >
-                  Explore varieties
-                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                  </svg>
-                </a>
+              <div className="p-6">
+                <h3 className="text-forest-deep mb-2">{category.name}</h3>
+                <p className="text-sm text-rich-earth/70">{category.varieties}</p>
               </div>
-            </motion.article>
+            </motion.div>
           ))}
         </div>
       </div>
@@ -342,99 +710,71 @@ function ProductsSection() {
   )
 }
 
-// ============================================
-// FARMER TESTIMONIALS - Bengali Voices
-// ============================================
+// Testimonials Section
 function TestimonialsSection() {
-  const ref = useRef(null)
-  const isInView = useInView(ref, { once: true, margin: '-100px' })
-
   const testimonials = [
     {
-      bengali: 'আমি শস্যশ্রী কোম্পানির "স্বর্ণমতি" ও "বাদশাভোগ" ধানবীজ বিগত কয়েক বছর যাবৎ চাষ করে আসছি। একর প্রতি প্রায় ২০০০-২১০০ কেজি ফলন পেয়েছি।',
-      english: 'I have been cultivating Swarnamoti and Badsha Bhog for years. Getting 2000-2100 kg yield per acre.',
-      name: 'সুনির্মল পাড়িয়া',
-      nameEn: 'Sunirmal Pariya',
-      location: 'উচুডিহা, দাঁতন',
-      district: 'West Medinipur',
+      name: 'Ramesh Mandal',
+      location: 'Hooghly, West Bengal',
+      quote: 'Sashyashree paddy seeds have transformed my yield. The Jamini variety is exceptional!',
+      image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=200',
     },
     {
-      bengali: 'শস্যশ্রী "উষা" তিলবীজের উৎপাদন সত্যই অবিশ্বাস্য। আমি ৫ বিঘা চাষ করেছি এবং যথেষ্ট লাভ ওঠাতে পারছি।',
-      english: 'The production of Usha sesame seeds is truly incredible. I cultivated 5 bigha and made great profit.',
-      name: 'সাধন মন্ডল',
-      nameEn: 'Sadhan Mondal',
-      location: 'বনকাঁটা, জুনবেদিয়া',
-      district: 'Bankura',
+      name: 'Subhas Das',
+      location: 'Burdwan, West Bengal',
+      quote: 'Been buying mustard seeds from them since 1995. Trust and quality that never fails.',
+      image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=200',
+    },
+    {
+      name: 'Pranab Roy',
+      location: 'Malda, West Bengal',
+      quote: 'The fodder seeds are excellent for my cattle. Healthy animals, happy farmer!',
+      image: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=200',
     },
   ]
 
   return (
-    <section id="farmers" ref={ref} className="py-24 md:py-32 bg-river-blue text-paper-white">
+    <section id="farmers" className="py-28 watercolor-wash">
       <div className="max-w-6xl mx-auto px-6">
-        {/* Section Header */}
-        <div className="grid md:grid-cols-12 gap-8 mb-16">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={isInView ? { opacity: 1, y: 0 } : {}}
-            className="md:col-span-6"
-          >
-            <span className="section-number !text-paper-white/20 !-webkit-text-stroke-paper-white">03</span>
-            <h2 className="-mt-8">
-              Voices from the <span className="text-jute-beige">Fields</span>
-            </h2>
-          </motion.div>
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ delay: 0.2 }}
-            className="md:col-span-5 md:col-start-8"
-          >
-            <p className="text-paper-white/70 font-body">
-              Real stories from the farmers who trust us with their livelihood.
-            </p>
-          </motion.div>
-        </div>
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="text-center mb-16"
+        >
+          <span className="handwritten text-xl text-terracotta mb-2 block">Farmer Voices</span>
+          <h2>Growing Together</h2>
+        </motion.div>
 
-        {/* Testimonials */}
-        <div className="grid md:grid-cols-2 gap-12">
+        <div className="grid md:grid-cols-3 gap-8">
           {testimonials.map((testimonial, index) => (
-            <motion.blockquote
-              key={testimonial.nameEn}
+            <motion.div
+              key={testimonial.name}
               initial={{ opacity: 0, y: 40 }}
-              animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ delay: index * 0.2 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: index * 0.15 }}
               className="relative"
             >
-              {/* Quote Mark */}
-              <span className="absolute -top-8 -left-4 text-8xl font-display text-jute-beige/20 leading-none">
-                &ldquo;
-              </span>
-
-              {/* Bengali Quote */}
-              <p className="font-bengali text-xl md:text-2xl text-paper-white mb-4 leading-relaxed relative z-10">
-                {testimonial.bengali}
-              </p>
-
-              {/* English Translation */}
-              <p className="font-body text-sm text-paper-white/60 italic mb-6">
-                {testimonial.english}
-              </p>
-
-              {/* Attribution */}
-              <footer className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-full bg-jute-beige flex items-center justify-center">
-                  <span className="font-display font-bold text-river-blue">
-                    {testimonial.name.charAt(0)}
-                  </span>
+              <div className="speech-bubble mb-8">
+                <p className="text-rich-earth italic">&quot;{testimonial.quote}&quot;</p>
+              </div>
+              <div className="flex items-center gap-4 ml-4">
+                <div className="w-14 h-14 rounded-full overflow-hidden border-3 border-sage-green">
+                  <Image
+                    src={testimonial.image}
+                    alt={testimonial.name}
+                    width={56}
+                    height={56}
+                    className="object-cover w-full h-full"
+                  />
                 </div>
                 <div>
-                  <cite className="not-italic">
-                    <span className="font-bengali text-lg text-paper-white block">{testimonial.name}</span>
-                    <span className="font-body text-sm text-paper-white/60">{testimonial.location}, {testimonial.district}</span>
-                  </cite>
+                  <h4 className="font-display text-forest-deep">{testimonial.name}</h4>
+                  <p className="text-sm text-rich-earth/60">{testimonial.location}</p>
                 </div>
-              </footer>
-            </motion.blockquote>
+              </div>
+            </motion.div>
           ))}
         </div>
       </div>
@@ -442,144 +782,236 @@ function TestimonialsSection() {
   )
 }
 
-// ============================================
-// VISION BLOCK - Founder Quote
-// ============================================
-function VisionBlock() {
-  const ref = useRef(null)
-  const isInView = useInView(ref, { once: true, margin: '-100px' })
+// Quality Promise Section
+function QualityPromise() {
+  const steps = [
+    { icon: '🌱', title: 'Selection', desc: 'Finest genetic varieties' },
+    { icon: '🔬', title: 'Testing', desc: 'Rigorous quality checks' },
+    { icon: '📦', title: 'Packaging', desc: 'Hygienic & secure' },
+    { icon: '🌾', title: 'Harvest', desc: 'Abundant yields' },
+  ]
 
   return (
-    <section ref={ref} className="py-24 md:py-32 bg-jute-beige/20 paper-texture">
-      <div className="max-w-4xl mx-auto px-6 text-center">
+    <section className="py-28 bg-soft-white">
+      <div className="max-w-6xl mx-auto px-6">
         <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={isInView ? { opacity: 1, scale: 1 } : {}}
-          transition={{ duration: 0.8 }}
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="text-center mb-16"
         >
-          {/* Large Quote */}
-          <blockquote className="relative">
-            <span className="block text-bengal-terracotta/20 text-[12rem] font-display leading-none absolute -top-20 left-1/2 -translate-x-1/2">
-              &ldquo;
-            </span>
-            <p className="font-display text-2xl md:text-4xl lg:text-5xl text-ink-black font-medium leading-snug relative z-10 mb-8">
-              Our promise is to strive hard to produce the best quality seeds
-              that bring happiness and prosperity to our farming community.
-            </p>
-            <footer>
-              <div className="w-20 h-[2px] bg-bengal-terracotta mx-auto mb-4" />
-              <cite className="not-italic">
-                <span className="font-display text-xl text-ink-black font-semibold block">Mr. Jagannath Das</span>
-                <span className="font-body text-ink-black/60">Founder & Managing Director</span>
-              </cite>
-            </footer>
-          </blockquote>
-        </motion.div>
-      </div>
-    </section>
-  )
-}
-
-// ============================================
-// CONTACT CTA - Split Screen
-// ============================================
-function ContactSection() {
-  const ref = useRef(null)
-  const isInView = useInView(ref, { once: true, margin: '-100px' })
-
-  return (
-    <section id="contact" ref={ref} className="bg-paper-white">
-      <div className="grid md:grid-cols-2">
-        {/* Contact Info */}
-        <motion.div
-          initial={{ opacity: 0, x: -50 }}
-          animate={isInView ? { opacity: 1, x: 0 } : {}}
-          className="bg-ink-black text-paper-white p-12 md:p-16 lg:p-20"
-        >
-          <span className="text-bengal-terracotta font-body text-sm tracking-widest uppercase mb-4 block">
-            Get in Touch
-          </span>
-          <h2 className="text-paper-white mb-8">
-            Let&apos;s <span className="text-jute-beige">Connect</span>
-          </h2>
-
-          <div className="space-y-6">
-            <div>
-              <h4 className="font-body text-sm text-paper-white/50 uppercase tracking-wider mb-2">Address</h4>
-              <p className="font-body text-paper-white">
-                Kashtadahi, Arambag<br />
-                West Bengal 712413
-              </p>
-            </div>
-            <div>
-              <h4 className="font-body text-sm text-paper-white/50 uppercase tracking-wider mb-2">Phone</h4>
-              <a href="tel:+918001926461" className="font-body text-paper-white hover:text-bengal-terracotta transition-colors">
-                +91 8001926461
-              </a>
-            </div>
-            <div>
-              <h4 className="font-body text-sm text-paper-white/50 uppercase tracking-wider mb-2">Email</h4>
-              <a href="mailto:info.sashyashree@gmail.com" className="font-body text-paper-white hover:text-bengal-terracotta transition-colors">
-                info.sashyashree@gmail.com
-              </a>
-            </div>
-          </div>
-        </motion.div>
-
-        {/* Dealer Inquiry */}
-        <motion.div
-          initial={{ opacity: 0, x: 50 }}
-          animate={isInView ? { opacity: 1, x: 0 } : {}}
-          className="bg-bengal-terracotta text-paper-white p-12 md:p-16 lg:p-20"
-        >
-          <span className="text-paper-white/70 font-body text-sm tracking-widest uppercase mb-4 block">
-            For Dealers
-          </span>
-          <h2 className="text-paper-white mb-6">
-            Partner <span className="text-jute-beige">With Us</span>
-          </h2>
-
-          <p className="font-body text-paper-white/80 mb-8">
-            Join our network of distributors and dealers across Eastern India.
-            Together, we can serve more farmers.
+          <span className="handwritten text-xl text-terracotta mb-2 block">Our Promise</span>
+          <h2>From Seed to Harvest</h2>
+          <p className="mt-4 max-w-2xl mx-auto">
+            Every seed goes through our careful quality assurance process to ensure
+            the best possible results for your farm.
           </p>
-
-          <a
-            href="mailto:info.sashyashree@gmail.com?subject=Dealer%20Inquiry"
-            className="inline-flex items-center gap-2 px-6 py-3 bg-paper-white text-bengal-terracotta font-body font-semibold rounded hover:bg-jute-beige transition-colors"
-          >
-            Become a Partner
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-            </svg>
-          </a>
         </motion.div>
+
+        <div className="relative">
+          {/* Connection Line */}
+          <div className="hidden md:block absolute top-1/2 left-0 right-0 h-1 bg-sage-green/20 -translate-y-1/2 rounded-full" />
+
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+            {steps.map((step, index) => (
+              <motion.div
+                key={step.title}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.15 }}
+                className="text-center relative"
+              >
+                <div className="w-20 h-20 mx-auto mb-4 bg-warm-cream rounded-full flex items-center justify-center shadow-md border-4 border-soft-white relative z-10">
+                  <span className="text-3xl">{step.icon}</span>
+                </div>
+                <h3 className="text-forest-deep mb-1">{step.title}</h3>
+                <p className="text-sm text-rich-earth/70">{step.desc}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
       </div>
     </section>
   )
 }
 
-// ============================================
-// FOOTER - Editorial Style
-// ============================================
+// Contact Section
+function ContactSection() {
+  return (
+    <section id="contact" className="py-28 bg-forest-deep relative overflow-hidden">
+      {/* Organic shapes */}
+      <div className="organic-blob w-80 h-80 bg-sage-green -top-20 -right-20" />
+      <div className="organic-blob w-60 h-60 bg-terracotta bottom-0 -left-20" />
+
+      <div className="max-w-6xl mx-auto px-6 relative z-10">
+        <div className="grid lg:grid-cols-2 gap-16">
+          {/* Contact Info */}
+          <motion.div
+            initial={{ opacity: 0, x: -30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+          >
+            <span className="handwritten text-2xl text-terracotta mb-2 block">Let&apos;s Connect</span>
+            <h2 className="text-soft-white mb-6">Get in Touch</h2>
+
+            <p className="text-warm-cream/80 mb-8">
+              Whether you&apos;re a farmer looking for quality seeds or a dealer interested
+              in partnership, we&apos;d love to hear from you.
+            </p>
+
+            <div className="space-y-6">
+              <div className="flex items-start gap-4">
+                <div className="w-12 h-12 rounded-full bg-sage-green/20 flex items-center justify-center">
+                  <span className="text-xl">📍</span>
+                </div>
+                <div>
+                  <h4 className="text-soft-white font-display">Visit Us</h4>
+                  <p className="text-warm-cream/70 text-sm">
+                    Kashtadahi, Arambag<br />
+                    West Bengal 712413
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-4">
+                <div className="w-12 h-12 rounded-full bg-sage-green/20 flex items-center justify-center">
+                  <span className="text-xl">📞</span>
+                </div>
+                <div>
+                  <h4 className="text-soft-white font-display">Call Us</h4>
+                  <p className="text-warm-cream/70 text-sm">+91 98XX XXX XXX</p>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-4">
+                <div className="w-12 h-12 rounded-full bg-sage-green/20 flex items-center justify-center">
+                  <span className="text-xl">✉️</span>
+                </div>
+                <div>
+                  <h4 className="text-soft-white font-display">Email Us</h4>
+                  <p className="text-warm-cream/70 text-sm">info@sashyashreeagri.in</p>
+                </div>
+              </div>
+            </div>
+
+            {/* WhatsApp Button */}
+            <a
+              href="https://wa.me/919876543210"
+              className="mt-8 inline-flex items-center gap-3 bg-[#25D366] text-white px-6 py-3 rounded-full hover:bg-[#128C7E] transition-all hover:shadow-lg"
+            >
+              <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+              </svg>
+              Chat on WhatsApp
+            </a>
+          </motion.div>
+
+          {/* Contact Form */}
+          <motion.div
+            initial={{ opacity: 0, x: 30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            className="bg-soft-white rounded-3xl p-8 shadow-xl"
+          >
+            <h3 className="text-forest-deep mb-6">Send us a Message</h3>
+            <form className="space-y-5">
+              <div>
+                <label className="block text-sm text-rich-earth mb-2 font-body">Your Name</label>
+                <input
+                  type="text"
+                  className="w-full px-4 py-3 rounded-xl border border-sage-green/30 focus:border-sage-green focus:outline-none focus:ring-2 focus:ring-sage-green/20 transition-all font-body"
+                  placeholder="Enter your name"
+                />
+              </div>
+              <div>
+                <label className="block text-sm text-rich-earth mb-2 font-body">Phone Number</label>
+                <input
+                  type="tel"
+                  className="w-full px-4 py-3 rounded-xl border border-sage-green/30 focus:border-sage-green focus:outline-none focus:ring-2 focus:ring-sage-green/20 transition-all font-body"
+                  placeholder="Enter your phone"
+                />
+              </div>
+              <div>
+                <label className="block text-sm text-rich-earth mb-2 font-body">I am a...</label>
+                <select className="w-full px-4 py-3 rounded-xl border border-sage-green/30 focus:border-sage-green focus:outline-none focus:ring-2 focus:ring-sage-green/20 transition-all font-body bg-white">
+                  <option>Farmer</option>
+                  <option>Dealer / Distributor</option>
+                  <option>Agricultural Business</option>
+                  <option>Other</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm text-rich-earth mb-2 font-body">Message</label>
+                <textarea
+                  rows={4}
+                  className="w-full px-4 py-3 rounded-xl border border-sage-green/30 focus:border-sage-green focus:outline-none focus:ring-2 focus:ring-sage-green/20 transition-all font-body resize-none"
+                  placeholder="How can we help you?"
+                />
+              </div>
+              <button type="submit" className="w-full btn-organic btn-organic-primary">
+                Send Message
+              </button>
+            </form>
+          </motion.div>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+// Footer
 function Footer() {
   return (
-    <footer className="bg-ink-black text-paper-white py-12">
+    <footer className="bg-warm-cream py-16 border-t border-sage-green/10">
       <div className="max-w-6xl mx-auto px-6">
-        <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-          <div className="flex items-center gap-4">
-            <span className="font-display font-black text-xl">শস্যশ্রী</span>
-            <span className="text-paper-white/30">|</span>
-            <span className="font-body text-sm text-paper-white/50">Sashyashree Agri Processing Pvt. Ltd.</span>
+        <div className="grid md:grid-cols-4 gap-12">
+          {/* Logo & About */}
+          <div className="md:col-span-2">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 rounded-full bg-sage-green flex items-center justify-center">
+                <svg className="w-5 h-5 text-soft-white" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 2C8 6 4 10 4 14c0 4.4 3.6 8 8 8s8-3.6 8-8c0-4-4-8-8-12zm0 18c-3.3 0-6-2.7-6-6 0-2.5 2-5 6-9 4 4 6 6.5 6 9 0 3.3-2.7 6-6 6z"/>
+                </svg>
+              </div>
+              <span className="font-display text-lg text-forest-deep">Sashyashree Agri</span>
+            </div>
+            <p className="text-sm text-rich-earth/70 max-w-sm">
+              Nurturing Eastern India&apos;s agricultural dreams since 1992 with premium
+              quality seeds and unwavering commitment to farmer prosperity.
+            </p>
           </div>
 
-          <div className="flex items-center gap-6">
-            <a href="#" className="font-body text-sm text-paper-white/50 hover:text-paper-white transition-colors">Privacy</a>
-            <a href="#" className="font-body text-sm text-paper-white/50 hover:text-paper-white transition-colors">Terms</a>
+          {/* Quick Links */}
+          <div>
+            <h4 className="font-display text-forest-deep mb-4">Quick Links</h4>
+            <ul className="space-y-2">
+              {['Our Story', 'Seeds', 'Quality', 'Contact'].map((link) => (
+                <li key={link}>
+                  <a href={`#${link.toLowerCase().replace(' ', '-')}`} className="text-sm text-rich-earth/70 hover:text-sage-green transition-colors">
+                    {link}
+                  </a>
+                </li>
+              ))}
+            </ul>
           </div>
 
-          <p className="font-body text-sm text-paper-white/30">
-            &copy; {new Date().getFullYear()} All rights reserved
+          {/* Seed Categories */}
+          <div>
+            <h4 className="font-display text-forest-deep mb-4">Our Seeds</h4>
+            <ul className="space-y-2">
+              {['Paddy', 'Mustard', 'Jute', 'Fodder', 'Maize'].map((seed) => (
+                <li key={seed}>
+                  <span className="text-sm text-rich-earth/70">{seed} Seeds</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+
+        <div className="mt-12 pt-8 border-t border-sage-green/10 text-center">
+          <p className="text-sm text-rich-earth/50">
+            © {new Date().getFullYear()} Sashyashree Agri Processing Pvt. Ltd. All rights reserved.
           </p>
         </div>
       </div>
@@ -587,42 +1019,37 @@ function Footer() {
   )
 }
 
-// ============================================
-// WHATSAPP BUTTON
-// ============================================
-function WhatsAppButton() {
+// WhatsApp Float Button
+function WhatsAppFloat() {
   return (
-    <motion.a
-      href="https://wa.me/918001926461"
+    <a
+      href="https://wa.me/919876543210"
       target="_blank"
       rel="noopener noreferrer"
-      className="whatsapp-btn w-14 h-14 bg-[#25D366] rounded-full flex items-center justify-center shadow-lg"
-      initial={{ scale: 0 }}
-      animate={{ scale: 1 }}
-      transition={{ delay: 2 }}
+      className="whatsapp-float"
+      aria-label="Chat on WhatsApp"
     >
-      <svg className="w-7 h-7 text-white" fill="currentColor" viewBox="0 0 24 24">
+      <svg className="w-7 h-7" fill="currentColor" viewBox="0 0 24 24">
         <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
       </svg>
-    </motion.a>
+    </a>
   )
 }
 
-// ============================================
-// MAIN PAGE
-// ============================================
-export default function BengalRootsPage() {
+// Main Page
+export default function HomePage() {
   return (
-    <main>
+    <main className="overflow-x-hidden">
       <Navigation />
       <HeroSection />
-      <TimelineSection />
-      <ProductsSection />
+      <PhilosophyStrip />
+      <StorySection />
+      <SeedCategories />
       <TestimonialsSection />
-      <VisionBlock />
+      <QualityPromise />
       <ContactSection />
       <Footer />
-      <WhatsAppButton />
+      <WhatsAppFloat />
     </main>
   )
 }
